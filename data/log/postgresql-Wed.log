@@ -1,0 +1,72 @@
+2025-06-11 03:09:38.598 CDT [8744] ERROR:  syntax error at or near "userAGENT" at character 250
+2025-06-11 03:09:38.598 CDT [8744] STATEMENT:  
+	      CREATE TABLE IF NOT EXISTS reports (
+	        id SERIAL PRIMARY KEY,
+	        name TEXT,
+	        email TEXT,
+	        title TEXT,
+	        description TEXT,
+	        severity TEXT,
+	        submittedAt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+	        userAGENT TEXT,
+	      )
+	    
+2025-06-11 03:10:57.880 CDT [8768] ERROR:  syntax error at or near "userAgent" at character 250
+2025-06-11 03:10:57.880 CDT [8768] STATEMENT:  
+	      CREATE TABLE IF NOT EXISTS reports (
+	        id SERIAL PRIMARY KEY,
+	        name TEXT,
+	        email TEXT,
+	        title TEXT,
+	        description TEXT,
+	        severity TEXT,
+	        submittedAt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+	        userAgent TEXT,
+	      )
+	    
+2025-06-11 03:12:35.580 CDT [8802] ERROR:  syntax error at or near ")" at character 273
+2025-06-11 03:12:35.580 CDT [8802] STATEMENT:  
+	      CREATE TABLE IF NOT EXISTS reports (
+	        id SERIAL PRIMARY KEY,
+	        name TEXT,
+	        email TEXT,
+	        title TEXT,
+	        description TEXT,
+	        severity TEXT,
+	        submittedAt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+	        userAgent TEXT,
+	      )
+	    
+2025-06-11 03:32:39.702 CDT [9141] FATAL:  role "your_username" does not exist
+2025-06-11 03:32:49.338 CDT [9143] FATAL:  database "bugtracker" does not exist
+2025-06-11 03:32:59.757 CDT [9145] FATAL:  database "best_quest" does not exist
+2025-06-11 03:33:06.904 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 03:33:11.155 CDT [109] LOG:  checkpoint complete: wrote 43 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.233 s, sync=0.008 s, total=4.252 s; sync files=35, longest=0.002 s, average=0.001 s; distance=183 kB, estimate=3847 kB
+2025-06-11 03:38:06.256 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 03:38:10.795 CDT [109] LOG:  checkpoint complete: wrote 46 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.520 s, sync=0.010 s, total=4.539 s; sync files=37, longest=0.003 s, average=0.001 s; distance=181 kB, estimate=3480 kB
+2025-06-11 03:43:06.804 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 03:43:07.118 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.304 s, sync=0.004 s, total=0.315 s; sync files=4, longest=0.003 s, average=0.001 s; distance=1 kB, estimate=3132 kB
+2025-06-11 03:58:06.419 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 03:58:06.735 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.304 s, sync=0.004 s, total=0.316 s; sync files=4, longest=0.003 s, average=0.001 s; distance=1 kB, estimate=2819 kB
+2025-06-11 04:18:07.136 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 04:18:07.453 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.305 s, sync=0.004 s, total=0.318 s; sync files=4, longest=0.003 s, average=0.001 s; distance=1 kB, estimate=2537 kB
+2025-06-11 07:48:11.555 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 07:48:11.890 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.315 s, sync=0.004 s, total=0.336 s; sync files=4, longest=0.003 s, average=0.001 s; distance=2 kB, estimate=2284 kB
+2025-06-11 08:08:12.290 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 08:08:15.928 CDT [109] LOG:  checkpoint complete: wrote 37 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.620 s, sync=0.009 s, total=3.638 s; sync files=35, longest=0.003 s, average=0.001 s; distance=159 kB, estimate=2071 kB
+2025-06-11 08:23:13.228 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 08:23:13.744 CDT [109] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.504 s, sync=0.004 s, total=0.516 s; sync files=5, longest=0.002 s, average=0.001 s; distance=0 kB, estimate=1864 kB
+2025-06-11 08:39:05.447 CDT [10378] ERROR:  relation "bug_reports" does not exist at character 15
+2025-06-11 08:39:05.447 CDT [10378] STATEMENT:  SELECT * FROM bug_reports;
+2025-06-11 08:39:13.912 CDT [10378] ERROR:  syntax error at or near "bugreports" at character 1
+2025-06-11 08:39:13.912 CDT [10378] STATEMENT:  bugreports
+	SELECT * FROM bugreports;
+2025-06-11 08:40:40.095 CDT [10378] ERROR:  syntax error at or near "q" at character 1
+2025-06-11 08:40:40.095 CDT [10378] STATEMENT:  q
+	SELECT * FROM bug_reports;
+2025-06-11 08:40:49.088 CDT [10378] ERROR:  relation "bug_reports" does not exist at character 15
+2025-06-11 08:40:49.088 CDT [10378] STATEMENT:  SELECT * FROM bug_reports;
+2025-06-11 08:47:31.626 CDT [10414] FATAL:  role "postgres" does not exist
+2025-06-11 08:47:40.731 CDT [10417] FATAL:  database "devuser" does not exist
+2025-06-11 08:53:14.345 CDT [109] LOG:  checkpoint starting: time
+2025-06-11 08:53:14.665 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.305 s, sync=0.005 s, total=0.321 s; sync files=4, longest=0.004 s, average=0.002 s; distance=1 kB, estimate=1678 kB

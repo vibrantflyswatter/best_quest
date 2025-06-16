@@ -1,0 +1,1 @@
+/usr/bin/postgres "-D" "/home/fedorathexplorer/best_quest/data" "-k" "/tmp"

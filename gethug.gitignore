@@ -1,0 +1,19 @@
+# Node.js
+node_modules/
+.env
+uploads/
+*.log
+
+# PostgreSQL
+best_quest/data/
+*.pid
+*.lock
+*.sock
+
+# VSCode and OS files
+.vscode/
+.DS_Store
+
+# Logs
+log/
+npm-debug.log*

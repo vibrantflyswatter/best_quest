@@ -1,0 +1,78 @@
+2025-06-14 04:51:15.910 CDT [6609] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 04:51:15.910 CDT [6609] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 06:12:14.709 CDT [6874] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 06:12:14.709 CDT [6874] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 08:34:13.698 CDT [7673] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 08:34:13.698 CDT [7673] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:01:25.224 CDT [8838] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 15:01:25.224 CDT [8838] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:07:26.681 CDT [8861] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 15:07:26.681 CDT [8861] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:07:58.713 CDT [8878] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 15:07:58.713 CDT [8878] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:11:14.021 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 15:11:14.854 CDT [109] LOG:  checkpoint complete: wrote 9 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.815 s, sync=0.004 s, total=0.834 s; sync files=8, longest=0.002 s, average=0.001 s; distance=17 kB, estimate=805 kB
+2025-06-14 15:15:22.031 CDT [8930] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 15:15:22.031 CDT [8930] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:15:38.607 CDT [8932] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 15:15:38.607 CDT [8932] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:19:49.157 CDT [8976] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 15:19:49.157 CDT [8976] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:19:57.205 CDT [8978] ERROR:  column "user_agent" of relation "reports" does not exist at character 83
+2025-06-14 15:19:57.205 CDT [8978] STATEMENT:  
+	    INSERT INTO reports (name, email, title, description, severity, submittedAt, user_agent, ip)
+	    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	  
+2025-06-14 15:26:15.057 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 15:26:15.699 CDT [109] LOG:  checkpoint complete: wrote 7 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.607 s, sync=0.019 s, total=0.643 s; sync files=7, longest=0.010 s, average=0.003 s; distance=18 kB, estimate=726 kB
+2025-06-14 15:51:16.101 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 15:51:16.416 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.305 s, sync=0.003 s, total=0.315 s; sync files=4, longest=0.002 s, average=0.001 s; distance=3 kB, estimate=654 kB
+2025-06-14 15:55:44.801 CDT [9232] ERROR:  syntax error at or near "/" at character 7
+2025-06-14 15:55:44.801 CDT [9232] STATEMENT:  fetch
+	/f
+	SELECT * FROM reports;
+2025-06-14 16:46:17.337 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 16:46:20.885 CDT [109] LOG:  checkpoint complete: wrote 36 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.527 s, sync=0.010 s, total=3.549 s; sync files=37, longest=0.002 s, average=0.001 s; distance=161 kB, estimate=605 kB
+2025-06-14 17:06:18.193 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 17:06:19.509 CDT [109] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.307 s, sync=0.004 s, total=1.317 s; sync files=10, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=544 kB
+2025-06-14 19:11:20.753 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 19:11:21.078 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.314 s, sync=0.003 s, total=0.325 s; sync files=4, longest=0.002 s, average=0.001 s; distance=4 kB, estimate=490 kB
+2025-06-14 19:16:20.177 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 19:16:20.695 CDT [109] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.506 s, sync=0.003 s, total=0.519 s; sync files=6, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=441 kB
+2025-06-14 19:21:20.795 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 19:21:21.109 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.304 s, sync=0.003 s, total=0.314 s; sync files=4, longest=0.002 s, average=0.001 s; distance=4 kB, estimate=397 kB
+2025-06-14 19:36:20.409 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 19:36:20.521 CDT [109] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.113 s; sync files=2, longest=0.002 s, average=0.002 s; distance=0 kB, estimate=358 kB
+2025-06-14 20:21:21.421 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 20:21:21.950 CDT [109] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.515 s, sync=0.003 s, total=0.530 s; sync files=6, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=322 kB
+2025-06-14 20:36:22.249 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 20:36:22.765 CDT [109] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.506 s, sync=0.003 s, total=0.517 s; sync files=6, longest=0.002 s, average=0.001 s; distance=2 kB, estimate=290 kB
+2025-06-14 23:56:26.625 CDT [109] LOG:  checkpoint starting: time
+2025-06-14 23:56:26.751 CDT [109] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.112 s, sync=0.003 s, total=0.127 s; sync files=2, longest=0.002 s, average=0.002 s; distance=2 kB, estimate=261 kB

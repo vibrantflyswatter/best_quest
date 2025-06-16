@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Submit Bug Report</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
+    label { display: block; margin-top: 1em; }
+    input, select, textarea { width: 100%; padding: 0.5em; }
+    button { margin-top: 1em; padding: 0.5em 1em; }
+  </style>
+</head>
+<body>
+  <h1>Bug Report Form</h1>
+  <form id="report-form">
+    <label>Name:
+      <input type="text" name="name" />
+    </label>
+
+    <label>Email:
+      <input type="email" name="email" />
+    </label>
+
+    <label>Title:
+      <input type="text" name="title" required />
+    </label>
+
+    <label>Description:
+      <textarea name="description" required></textarea>
+    </label>
+
+    <label>Severity:
+      <select name="severity" required>
+        <option value="minor">Minor</option>
+        <option value="moderate">Moderate</option>
+        <option value="severe">Severe</option>
+        <option value="critical">Critical</option>
+      </select>
+    </label>
+
+    <button type="submit">Submit Report</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('report-form');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const payload = Object.fromEntries(data.entries());
+
+      const res = await fetch('/dev/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert('Report submitted!');
+        form.reset();
+        location.href = '/reports.html';
+      } else {
+        alert('There was a problem submitting your report.');
+      }
+    });
+  </script>
+  <script src="/userHeader.js"></script>
+</body>
+</html>

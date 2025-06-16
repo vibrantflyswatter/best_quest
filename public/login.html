@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Log In</title>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 2em auto; }
+    label { display: block; margin-top: 1em; }
+    input { width: 100%; padding: 0.5em; }
+    button { margin-top: 1em; padding: 0.5em 1em; }
+  </style>
+</head>
+<body>
+  <h1>Log In</h1>
+  <form id="login-form">
+    <label>Username: <input type="text" name="username" required /></label>
+    <label>Password: <input type="password" name="password" required /></label>
+    <button type="submit">Log In</button>
+  </form>
+
+  <p><a href="/register.html">Create an account</a></p>
+
+  <script>
+    const form = document.getElementById('login-form');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const payload = Object.fromEntries(data.entries());
+
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert('Logged in!');
+        location.href = '/';
+      } else {
+        alert('Login failed');
+      }
+    });
+  </script>
+</body>
+</html>

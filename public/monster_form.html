@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+  fetch('/auth/me')
+    .then(res => {
+      if (!res.ok) location.href = '/login.html';
+      return res.json();
+    })
+    .then(user => {
+      if (location.pathname.includes('reports') && !user.is_admin) {
+        alert('Admins only.');
+        location.href = '/';
+      }
+    });
+</script>
+<head>
+  <meta charset="UTF-8" />
+  <title>Monster Editor</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
+    label { display: block; margin-top: 1em; }
+    input, textarea { width: 100%; padding: 0.5em; }
+    button { margin-top: 1em; padding: 0.5em 1em; }
+  </style>
+</head>
+<body>
+  <h1 id="form-title">New Monster</h1>
+  <form id="monster-form" enctype="multipart/form-data">
+    <input type="hidden" name="id" id="monster-id" />
+    <label>Name: <input name="name" required /></label>
+    <label>Description: <textarea name="description" required></textarea></label>
+    <label>HP: <input type="number" name="hp" required /></label>
+    <label>MP: <input type="number" name="mp" required /></label>
+    <label>Attack: <input type="number" name="attack" required /></label>
+    <label>Defense: <input type="number" name="defense" required /></label>
+    <label>Magic: <input type="number" name="magic" required /></label>
+    <label>Spirit: <input type="number" name="spirit" required /></label>
+    <label>Agility: <input type="number" name="agility" required /></label>
+    <label>Elemental Affinities: <input name="elem_affinities" /></label>
+    <label>Image: <input type="file" name="image" /></label>
+    <button type="submit">Save</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('monster-form');
+    const monsterId = new URLSearchParams(location.search).get('id');
+
+    if (monsterId) {
+      document.getElementById('form-title').textContent = 'Edit Monster';
+
+      fetch(`/dev/monsters/${monsterId}`)
+        .then(res => res.json())
+        .then(monster => {
+          for (const [key, val] of Object.entries(monster)) {
+            const input = form.elements[key];
+            if (input && key !== 'image_path') input.value = val;
+          }
+        });
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const url = monsterId ? `/dev/monsters/${monsterId}` : '/dev/monsters';
+
+      const res = await fetch(url, {
+       method: 'POST',
+       body: data
+    });
+
+      if (res.ok) {
+        alert('Monster saved!');
+        location.href = '/monsters.html';
+      } else {
+        alert('Error saving monster.');
+      }
+    });
+  </script>
+  <script src="/userHeader.js"></script>
+</body>
+</html>

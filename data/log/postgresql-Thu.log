@@ -1,0 +1,10 @@
+2025-06-12 08:55:14.433 CDT [109] LOG:  checkpoint starting: time
+2025-06-12 08:55:14.764 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.314 s, sync=0.006 s, total=0.332 s; sync files=4, longest=0.003 s, average=0.002 s; distance=0 kB, estimate=1510 kB
+2025-06-12 18:00:24.677 CDT [109] LOG:  checkpoint starting: time
+2025-06-12 18:00:25.098 CDT [109] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.412 s, sync=0.003 s, total=0.422 s; sync files=5, longest=0.002 s, average=0.001 s; distance=3 kB, estimate=1359 kB
+2025-06-12 18:05:24.197 CDT [109] LOG:  checkpoint starting: time
+2025-06-12 18:05:24.310 CDT [109] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.104 s, sync=0.002 s, total=0.114 s; sync files=2, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=1224 kB
+2025-06-12 18:10:24.313 CDT [109] LOG:  checkpoint starting: time
+2025-06-12 18:10:24.424 CDT [109] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.002 s, total=0.112 s; sync files=2, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=1101 kB
+2025-06-12 18:15:24.520 CDT [109] LOG:  checkpoint starting: time
+2025-06-12 18:15:24.833 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.303 s, sync=0.003 s, total=0.313 s; sync files=4, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=991 kB

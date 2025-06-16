@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Project Selector</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: sans-serif;
+      margin: 0;
+      padding-top: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #user-info {
+      width: 100%;
+      background: #222;
+      color: #eee;
+      padding: 0.5em 1em;
+      text-align: right;
+      font-size: 0.9em;
+      position: fixed;
+      top: 0;
+      left: 0;
+      box-sizing: border-box;
+    }
+    h1 {
+      margin: 3em 0 2rem; /* leaves room for header */
+    }
+    a {
+      display: block;
+      padding: 1rem 2rem;
+      background: #222;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      margin: 0.5rem;
+      transition: background 0.3s;
+    }
+    a:hover {
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+  <div id="user-info"></div> <!-- header goes here -->
+  <h1>Best Quest !</h1>
+  <a href="/report_form.html">Submit a Bug</a> 
+  <a href="dungeon.html">Dungeon Viewer</a> 
+  <a href="/monsters.html">Monster Editor</a> 
+  <a href="/login.html">Log In</a>
+  <a href="/register.html">Sign Up</a>
+
+  <script src="/userHeader.js"></script>
+</body>
+</html>

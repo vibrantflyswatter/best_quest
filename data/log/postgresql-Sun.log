@@ -1,0 +1,55 @@
+2025-06-15 00:06:26.951 CDT [109] LOG:  checkpoint starting: time
+2025-06-15 00:06:27.263 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.303 s, sync=0.003 s, total=0.313 s; sync files=4, longest=0.002 s, average=0.001 s; distance=2 kB, estimate=235 kB
+2025-06-15 14:13:38.868 CDT [52] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 14:13:38.869 CDT [52] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 14:13:38.870 CDT [52] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": No such file or directory
+2025-06-15 14:13:38.874 CDT [52] LOG:  database system is shut down
+2025-06-15 15:06:11.861 CDT [140] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 15:06:11.861 CDT [140] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 15:06:11.863 CDT [140] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": No such file or directory
+2025-06-15 15:06:11.866 CDT [140] LOG:  database system is shut down
+2025-06-15 15:09:03.789 CDT [165] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 15:09:03.789 CDT [165] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 15:09:03.791 CDT [165] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": No such file or directory
+2025-06-15 15:09:03.794 CDT [165] LOG:  database system is shut down
+2025-06-15 15:09:41.361 CDT [171] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 15:09:41.362 CDT [171] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 15:09:41.363 CDT [171] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": No such file or directory
+2025-06-15 15:09:41.366 CDT [171] LOG:  database system is shut down
+2025-06-15 15:11:16.043 CDT [188] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 15:11:16.043 CDT [188] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 15:11:16.045 CDT [188] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": No such file or directory
+2025-06-15 15:11:16.049 CDT [188] LOG:  database system is shut down
+2025-06-15 15:13:25.881 CDT [193] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 15:13:25.881 CDT [193] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 15:13:25.883 CDT [193] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": No such file or directory
+2025-06-15 15:13:25.887 CDT [193] LOG:  database system is shut down
+2025-06-15 15:15:19.008 CDT [209] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 15:15:19.008 CDT [209] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 15:15:19.011 CDT [209] FATAL:  lock file "/tmp/.s.PGSQL.5432.lock" already exists
+2025-06-15 15:15:19.011 CDT [209] HINT:  Is another postmaster (PID 107) using socket file "/tmp/.s.PGSQL.5432"?
+2025-06-15 15:15:19.014 CDT [209] LOG:  database system is shut down
+2025-06-15 15:17:50.794 CDT [226] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 15:17:50.795 CDT [226] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 15:17:50.801 CDT [226] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2025-06-15 15:17:50.813 CDT [230] LOG:  database system was interrupted; last known up at 2025-06-15 00:06:27 CDT
+2025-06-15 15:17:51.250 CDT [230] LOG:  database system was not properly shut down; automatic recovery in progress
+2025-06-15 15:17:51.255 CDT [230] LOG:  redo starts at 0/1E49E20
+2025-06-15 15:17:51.255 CDT [230] LOG:  invalid record length at 0/1E49F08: wanted 24, got 0
+2025-06-15 15:17:51.255 CDT [230] LOG:  redo done at 0/1E49ED0 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2025-06-15 15:17:51.259 CDT [228] LOG:  checkpoint starting: end-of-recovery immediate wait
+2025-06-15 15:17:51.270 CDT [228] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.002 s, total=0.013 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB
+2025-06-15 15:17:51.277 CDT [226] LOG:  database system is ready to accept connections
+2025-06-15 21:07:38.789 CDT [34] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-15 21:07:38.789 CDT [34] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-15 21:07:38.793 CDT [34] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2025-06-15 21:07:38.801 CDT [38] LOG:  database system was interrupted; last known up at 2025-06-15 15:17:51 CDT
+2025-06-15 21:07:39.098 CDT [38] LOG:  database system was not properly shut down; automatic recovery in progress
+2025-06-15 21:07:39.101 CDT [38] LOG:  redo starts at 0/1E49F80
+2025-06-15 21:07:39.101 CDT [38] LOG:  invalid record length at 0/1E49FB8: wanted 24, got 0
+2025-06-15 21:07:39.101 CDT [38] LOG:  redo done at 0/1E49F80 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2025-06-15 21:07:39.106 CDT [36] LOG:  checkpoint starting: end-of-recovery immediate wait
+2025-06-15 21:07:39.117 CDT [36] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.002 s, total=0.013 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB
+2025-06-15 21:07:39.122 CDT [34] LOG:  database system is ready to accept connections
+2025-06-15 21:12:39.217 CDT [36] LOG:  checkpoint starting: time
+2025-06-15 21:12:39.730 CDT [36] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.503 s, sync=0.004 s, total=0.513 s; sync files=6, longest=0.002 s, average=0.001 s; distance=7 kB, estimate=7 kB

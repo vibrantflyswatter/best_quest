@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register</title>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 2em auto; }
+    label { display: block; margin-top: 1em; }
+    input { width: 100%; padding: 0.5em; }
+    button { margin-top: 1em; padding: 0.5em 1em; }
+  </style>
+</head>
+<body>
+  <h1>Create Account</h1>
+  <form id="register-form">
+    <label>Username: <input type="text" name="username" required /></label>
+    <label>Email: <input type="email" name="email" required /></label>
+    <label>Password: <input type="password" name="password" required /></label>
+    <button type="submit">Register</button>
+  </form>
+
+  <p><a href="/login.html">Already have an account? Log in</a></p>
+
+  <script>
+    const form = document.getElementById('register-form');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const payload = Object.fromEntries(data.entries());
+
+      const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert('Registered! You can now log in.');
+        location.href = '/login.html';
+      } else {
+        alert('Registration failed');
+      }
+    });
+  </script>
+</body>
+</html>
