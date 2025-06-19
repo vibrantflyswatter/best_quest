@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Best Quest – Map Editor</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: #222;
+      color: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    #grid-wrapper {
+  padding: 0;
+  overflow: auto;
+  max-height: 80vh;
+  max-width: 100%;
+  border: 1px solid #444;
+}
+
+#grid {
+  display: grid;
+  background: #333;
+}
+
+.tile, .coord-label {
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75em;
+  border: 1px solid #999; /* <--- thin lines between tiles */
+}
+
+.tile {
+  background: #ddd;
+  position: relative;
+  cursor: pointer;
+}
+
+.tile.selected {
+  outline: 2px solid red;
+}
+
+.wall {
+  position: absolute;
+  background: #333;
+}
+.wall.N { top: 0; left: 0; right: 0; height: 5px; }
+.wall.S { bottom: 0; left: 0; right: 0; height: 5px; }
+.wall.E { right: 0; top: 0; bottom: 0; width: 5px; }
+.wall.W { left: 0; top: 0; bottom: 0; width: 5px; }
+
+.coord-label {
+  background: #bbb;
+  font-weight: bold;
+  z-index: 2;
+}
+
+/* Sticky row and column */
+.sticky-x {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.sticky-y {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.corner {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  background: #aaa;
+}
+.start-tile {
+  background-color: #ffee88 !important;
+  position: relative;
+}
+
+.start-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+}
+
+.start-arrow.dir-0 { /* North */
+  border-bottom-color: red;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.start-arrow.dir-1 { /* East */
+  border-left-color: red;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.start-arrow.dir-2 { /* South */
+  border-top-color: red;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.start-arrow.dir-3 { /* West */
+  border-right-color: red;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+  </style>
+</head>
+<body>
+ <header>
+  <label>Width: <input type="number" id="width" value="8"></label>
+  <label>Height: <input type="number" id="height" value="8"></label>
+  <button onclick="createGrid()">Generate Grid</button>
+  <button onclick="saveMap()">Save Map</button>
+
+  <select id="map-select" onchange="loadSelectedMap()">
+    <option value="">-- Load Map --</option>
+  </select>
+
+  <div id="selected-coords">Selected: (—, —)</div>
+  <div id="wall-controls" style="margin-left: auto; display: flex; gap: 10px;">
+    <label><input type="checkbox" id="wall-N"> N</label>
+    <label><input type="checkbox" id="wall-E"> E</label>
+    <label><input type="checkbox" id="wall-S"> S</label>
+    <label><input type="checkbox" id="wall-W"> W</label>
+  </div>
+
+  <fieldset>
+  <legend>Starting Position</legend>
+  <label>X: <input type="number" id="startX" min="0"></label>
+  <label>Y: <input type="number" id="startY" min="0"></label>
+  <label>Dir:
+    <select id="startDir">
+      <option value="0">North</option>
+      <option value="1">East</option>
+      <option value="2">South</option>
+      <option value="3">West</option>
+    </select>
+  </label>
+</fieldset>
+  
+</header>
+
+  <div id="editor-container">
+    <div id="y-labels"></div>
+    <div>
+      <div id="x-labels"></div>
+      <div id="grid-wrapper">
+        <div id="grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let mapData = [];
+    let selectedTile = null;
+    let currentMapId = null;
+
+
+
+function loadMap(map) {
+  document.getElementById('startX').value = map.start_x ?? 0;
+  document.getElementById('startY').value = map.start_y ?? 0;
+  document.getElementById('startDir').value = map.start_dir ?? 0;
+  document.getElementById('width').value = map.width;
+  document.getElementById('height').value = map.height;
+  mapData = map.data.tiles;
+
+  const width = map.width;
+  const height = map.height;
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = `repeat(${width + 1}, 40px)`;
+
+function redrawTileWalls(tileEl, tileData) {
+  tileEl.innerHTML = '';
+  for (const dir of ['N', 'E', 'S', 'W']) {
+    if (tileData.walls[dir]) {
+      const wall = document.createElement('div');
+      wall.classList.add('wall', dir);
+      tileEl.appendChild(wall);
+    }
+    updateStartTileVisual()
+  }
+}
+
+for (const dir of ['N', 'E', 'S', 'W']) {
+  const checkbox = document.getElementById(`wall-${dir}`);
+  checkbox.addEventListener('change', () => {
+    if (!selectedTile) return;
+    const tileData = selectedTile._tileData;
+    tileData.walls[dir] = checkbox.checked;
+    redrawTileWalls(selectedTile, tileData);
+  });
+}
+
+  for (let y = -1; y < height; y++) {
+    for (let x = -1; x < width; x++) {
+      const el = document.createElement('div');
+
+      if (x === -1 && y === -1) {
+        el.className = 'coord-label corner';
+      } else if (y === -1) {
+        el.className = 'coord-label sticky-x';
+        el.textContent = x;
+      } else if (x === -1) {
+        el.className = 'coord-label sticky-y';
+        el.textContent = y;
+      } else {
+        const tile = mapData[y][x];
+        el.className = 'tile';
+        el.dataset.x = x;
+        el.dataset.y = y;
+        // Mark the starting tile visually
+if (x === map.start_x && y === map.start_y) {
+  el.classList.add('start-tile');
+  const arrow = document.createElement('div');
+  arrow.className = `start-arrow dir-${map.start_dir}`;
+  el.appendChild(arrow);
+}
+        redrawTileWalls(el, tile);
+        el.onclick = () => {
+          if (selectedTile === el) {
+            toggleWall(el, tile);
+          } else {
+            selectTile(el, tile);
+          }
+        };
+      }
+
+      grid.appendChild(el);
+    }
+  }
+}
+
+
+    function createGrid() {
+  const width = parseInt(document.getElementById('width').value);
+  const height = parseInt(document.getElementById('height').value);
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = `repeat(${width + 1}, 40px)`; // +1 for Y labels
+
+  mapData = [];
+
+  for (let y = -1; y < height; y++) {
+    if (y >= 0) mapData.push([]);
+
+    for (let x = -1; x < width; x++) {
+      const el = document.createElement('div');
+
+      if (x === -1 && y === -1) {
+        // Top-left corner
+        el.className = 'coord-label corner';
+        el.style.background = '#999';
+        el.textContent = '';
+      } else if (y === -1) {
+        // X labels
+        el.className = 'coord-label sticky-x';
+        el.style.background = '#999';
+        el.textContent = x;
+      } else if (x === -1) {
+        // Y labels
+        el.className = 'coord-label sticky-y';
+        el.style.background = '#999';
+        el.textContent = y;
+      } else {
+        // Main tile
+        el.className = 'tile';
+        el.dataset.x = x;
+        el.dataset.y = y;
+        el.onclick = () => {
+  if (selectedTile === el) {
+    toggleWall(el, tile);
+  } else {
+    selectTile(el, tile);
+  }
+  if (x === map.start_x && y === map.start_y) {
+  el.style.backgroundColor = '#ffcc00';
+  el.title = 'Start';
+}
+};
+
+        const tile = { type: 'floor', walls: { N: false, E: false, S: false, W: false } };
+        el.onclick = () => selectTile(el, tile);
+        mapData[y].push(tile);
+      }
+
+      grid.appendChild(el);
+    }
+  }
+}
+
+    function selectTile(tileEl, tileData) {
+  if (selectedTile) selectedTile.classList.remove('selected');
+
+  selectedTile = tileEl;
+  tileEl.classList.add('selected');
+
+  const x = tileEl.dataset.x;
+  const y = tileEl.dataset.y;
+  document.getElementById('selected-coords').textContent = `Selected: (${x}, ${y})`;
+
+  // Update checkbox states
+  for (const dir of ['N', 'E', 'S', 'W']) {
+    document.getElementById(`wall-${dir}`).checked = tileData.walls[dir];
+  }
+
+  // Store reference for header toggles
+  selectedTile._tileData = tileData;
+}
+
+    function toggleWall(tileEl, tileData) {
+  if (!selectedTile || selectedTile !== tileEl) return; // ignore clicks unless re-clicking selected
+
+  const walls = tileData.walls;
+  const currentCount = Object.values(walls).filter(Boolean).length;
+
+  if (currentCount < 4) {
+    // Fill all 4 walls
+    tileData.walls = { N: true, E: true, S: true, W: true };
+  } else {
+    // Clear all walls
+    tileData.walls = { N: false, E: false, S: false, W: false };
+  }
+
+  // Redraw walls
+  tileEl.innerHTML = '';
+  for (const dir of ['N', 'E', 'S', 'W']) {
+    if (tileData.walls[dir]) {
+      const wall = document.createElement('div');
+      wall.classList.add('wall', dir);
+      tileEl.appendChild(wall);
+    }
+  }
+}
+  
+
+async function fetchMapList() {
+  const res = await fetch('/dev/maps');
+  const maps = await res.json();
+  const select = document.getElementById('map-select');
+  maps.forEach(map => {
+    const opt = document.createElement('option');
+    opt.value = map.id;
+    opt.textContent = `${map.name} (#${map.id})`;
+    select.appendChild(opt);
+  });
+}
+ async function loadSelectedMap() {
+  const id = document.getElementById('map-select').value;
+  if (!id) return;
+
+  const res = await fetch(`/dev/maps/${id}`);
+  const map = await res.json();
+  currentMapId = id;
+  loadMap(map);
+}
+
+function updateStartTileVisual() {
+  // Clear old highlight
+  document.querySelectorAll('.start-tile').forEach(el => {
+    el.classList.remove('start-tile');
+    const arrow = el.querySelector('.start-arrow');
+    if (arrow) arrow.remove();
+  });
+
+  const x = parseInt(document.getElementById('startX').value);
+  const y = parseInt(document.getElementById('startY').value);
+  const dir = parseInt(document.getElementById('startDir').value);
+
+  if (isNaN(x) || isNaN(y)) return;
+
+  const tileEl = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+  if (!tileEl) return;
+
+  tileEl.classList.add('start-tile');
+
+  const arrow = document.createElement('div');
+  arrow.className = `start-arrow dir-${dir}`;
+  tileEl.appendChild(arrow);
+}
+
+    async function saveMap() {
+  const name = prompt("Map name?", document.querySelector("#map-select option:checked")?.textContent || '');
+
+  const body = {
+    name,
+    width: mapData[0].length,
+    height: mapData.length,
+    data: { tiles: mapData },
+    start_x: parseInt(document.getElementById("startX").value),
+    start_y: parseInt(document.getElementById("startY").value),
+    start_dir: parseInt(document.getElementById("startDir").value)
+  };
+
+  let res;
+  if (currentMapId) {
+    res = await fetch(`/dev/maps/${currentMapId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+  } else {
+    res = await fetch("/dev/maps", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+  }
+
+  const result = await res.json();
+  alert(`Map ${currentMapId ? "updated" : "saved"} as ID ${result.id}`);
+  currentMapId = result.id;
+}
+
+    createGrid();
+    fetchMapList();  //load once like it said
+
+    document.getElementById('startX').addEventListener('input', updateStartTileVisual);
+document.getElementById('startY').addEventListener('input', updateStartTileVisual);
+document.getElementById('startDir').addEventListener('change', updateStartTileVisual);
+  </script>
+</body>
+</html>

@@ -1,4 +1,3 @@
-
 (() => {
   const TILESET1 = "assets/dungeon/SIMPBRICK1";
   const TILESET2 = "assets/dungeon/SIMPBRICK2";
@@ -10,53 +9,11 @@
 
   const npcLocation = { x: 15, y: 32 };
 
-  const MAP = [
-    "XXXXXXXXXOXXXXXXXXXXXXXXXXXXXX",
-    "XXXOOOOOXOXXXXXXXOOXXXXXXXXXXX",
-    "XXXOXXXOXOXXXXXXXOOOXOOOOOOXXX",
-    "XXOOOXXOXOXXXXXXXXXOOOXOOOOXXX",
-    "XXOOOXXOOOXXXXXXXXXOOOXXOOOXXX",
-    "XXOOOXXOXOOOOOOOXXXXOXXOOXOXXX",
-    "XXOOOXXOXXXXXXXOXXOOOOXOOXOXXX",
-    "XXXXXXXOOXXXXXXOXXOXXOOOOOOXXX",
-    "XXXXOXXOOXXOOOXOXOOXXOOXXXXXXX",
-    "XXOOOOOOOOOOXOOOOOXOOOXXXXXXXX",
-    "XXXXOXXXXXXOOOXOXOOOXXXXXXXXXX",
-    "XXOOOXOXXXXXOXXXXXOXXXXXXXXXXX",
-    "XXOXXXOXXXXXOOOOOOOXXXXXXXXXXX",
-    "XXOOOOOXXXXXXXXOXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXOXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXOXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXOOOXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXOOOOOXXXXXXXXXXXX",
-    "XXXXXXXXXXXOOOOOOOOOXXXXXXXXXX",
-    "XXXXXXXXXXXOOOOOOOOOXXXXXXXXXX",
-    "XXXXXXXOOOOOOOOOOOOOOOOOXXXXXX",
-    "XXXXXXXOOOOOOOOOOOOOOOOOXXXXXX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOXXXXOXXXXXOOOOOOOOX",
-    "XXOOOOOOOOOXXXOOOXXXXOOOOOOOOX",
-    "XXOOOOOOOOOXXXOOOXXXXOOOOOOOOX",
-    "XXOOOOOOOOOXXXOOOXXXXOOOOOOOOX",
-    "XXOOOOOOOOOXXXXXXXXXXOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXOOOOOOOOOOOOOOOOOOOOOOOOOOOX",
-    "XXXXXXXOOOOOOOOOOOOOOOOOXXXXXX",
-    "XXXXXXXXXXXOOOOOOOOOXXXXXXXXXX",
-    "XXXXXXXXXXXXXXOOOXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXOXXXXXXXXXXXXXX"
-  ];
+ let mapData = [];
+  let mapWidth = 0;
+let mapHeight = 0;
 
-  const player = { x: 3, y: 5, dir: 0 };
+  const player = { x: 3, y: 3, dir: 0 };
   const DIRS = [
     { dx: 0, dy: -1 },
     { dx: 1, dy: 0 },
@@ -74,13 +31,15 @@
   let assetsLoaded = false;
 
   function loadImage(src) {
-    return new Promise(resolve => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => resolve(null);
-      img.src = src;
-    });
-  }
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null); // image failed to load
+    img.src = src;
+  });
+}
+
+
 
   async function preloadAssets() {
     bgImage = await loadImage(BG_PATH);
@@ -107,9 +66,14 @@
     updatePlayerPositionDisplay();
   }
 
-  function isWalkable(x, y) {
-    return MAP[y] && MAP[y][x] && MAP[y][x] !== "X";
-  }
+  function isWalkable(x, y, fromDir = null) {
+  if (!mapData[y] || !mapData[y][x]) return false;
+  if (!fromDir) return true; // used for rendering range
+
+  const tile = mapData[y][x];
+  const oppDir = ["N", "E", "S", "W"][(["N", "E", "S", "W"].indexOf(fromDir) + 2) % 4];
+  return !tile.walls[oppDir];
+}
 
   function posAfter(dir, steps) {
     const d = DIRS[dir];
@@ -135,17 +99,55 @@
       const tileX = forward.x + lateral.x;
       const tileY = forward.y + lateral.y;
 
-      if (!MAP[tileY] || !MAP[tileY][tileX]) continue;
+      if (!mapData[tileY] || !mapData[tileY][tileX]) continue;
 
       const key = `${offset}_${depth}`;
       const xPos = (canvas.width - 640) / 2;
       const yPos = (canvas.height - 480) / 2;
 
-      // 🧱 Draw wall only on unwalkable tiles
-      if (!isWalkable(tileX, tileY)) {
-        const img = ((tileX + tileY) % 2 === 0 ? images1[key] : images2[key]);
-        if (img) context.drawImage(img, xPos, yPos);
-      }
+//draw that shit on the right tiles/walls yay
+      const tile = mapData[tileY]?.[tileX];
+if (tile?.walls) {
+  for (const dir of ["N", "E", "S", "W"]) {
+    if (!tile.walls[dir]) continue;
+
+    // Determine which tile the wall belongs to based on direction
+    const dx = dir === "E" ? 1 : dir === "W" ? -1 : 0;
+    const dy = dir === "S" ? 1 : dir === "N" ? -1 : 0;
+
+    const wallX = tileX + dx;
+    const wallY = tileY + dy;
+
+    // Check visibility: is this wall visible in current frame?
+    const offsetX = wallX - player.x;
+    const offsetY = wallY - player.y;
+
+    // Project this to view-space
+    let viewOffset = 0, viewDepth = 0;
+    if (player.dir === 0) { // North
+  viewOffset = offsetX;
+  viewDepth = -offsetY;
+} else if (player.dir === 1) { // East
+  viewOffset = offsetY;       // <- FIXED
+  viewDepth = offsetX;
+} else if (player.dir === 2) { // South
+  viewOffset = -offsetX;
+  viewDepth = offsetY;
+} else if (player.dir === 3) { // West
+  viewOffset = -offsetY;      // <- FIXED
+  viewDepth = -offsetX;
+}
+
+    const wallKey = `${viewOffset}_${viewDepth}`;
+    const img = ((wallX + wallY) % 2 === 0 ? images1[wallKey] : images2[wallKey]);
+    if (img) {
+      const drawX = (canvas.width - img.width) / 2;
+      const drawY = (canvas.height - img.height) / 2;
+      context.drawImage(img, drawX, drawY);
+    }
+  }
+}
+
 
       // 👾 Draw NPC on specific coordinates (even if walkable)
       if (tileX === npcLocation.x && tileY === npcLocation.y) {
@@ -156,6 +158,26 @@
   }
 }
 
+function exportCurrentMap() {
+  const map = {
+    width: mapWidth,
+    height: mapHeight,
+    start_x: player.x,
+    start_y: player.y,
+    start_dir: player.dir,
+    tiles: mapData
+  };
+
+  const blob = new Blob([JSON.stringify(map, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "exported_map.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
   function animateTransition(updatePlayerStateCallback) {
     if (!assetsLoaded) {
@@ -216,12 +238,21 @@
     if (action === "left") player.dir = (player.dir + 3) % 4;
     else if (action === "right") player.dir = (player.dir + 1) % 4;
     else if (action === "up") {
-      const { x: nx, y: ny } = posAfter(player.dir, 1);
-      if (isWalkable(nx, ny)) {
-        player.x = nx;
-        player.y = ny;
-      }
-    }
+  const { x: nx, y: ny } = posAfter(player.dir, 1);
+  const currTile = mapData[player.y]?.[player.x];
+  const nextTile = mapData[ny]?.[nx];
+  const dirNames = ["N", "E", "S", "W"];
+  const dirName = dirNames[player.dir];
+  const oppDir = dirNames[(player.dir + 2) % 4];
+
+  if (
+    currTile && !currTile.walls[dirName] &&
+    nextTile && !nextTile.walls[oppDir]
+  ) {
+    player.x = nx;
+    player.y = ny;
+  }
+}
   }
 
   async function performTurn(action, animate = true) {
@@ -264,16 +295,35 @@
   if (posBox) {
     posBox.textContent = `Position: X${player.x} Y${player.y} Facing: ${dirs[player.dir]}`;
   }
+
+  
 }
+async function loadMap(id = 4) {
+  const res = await fetch(`/dev/maps/${id}`);
+  const map = await res.json();
+  mapWidth = map.width;
+  mapHeight = map.height;
+  mapData = map.data.tiles;
+  player.x = 3;
+  player.y = 3;
+  player.dir = 0;
+  drawScene();
+  updatePlayerPositionDisplay();
+}
+
   window.addEventListener("keydown", e => {
     if (e.repeat) return;
     if (e.key === "ArrowLeft") performTurn("left");
     else if (e.key === "ArrowRight") performTurn("right");
     else if (e.key === "ArrowUp") performTurn("up");
     else if (e.key === " ") performTurn("standby");
+    else if (e.key.toLowerCase() === "p") exportCurrentMap(); // P = Save
   });
 
-  preloadAssets();
+
+  preloadAssets().then(() => {
+  loadMap(4); // Load map ID 1
+});
   window.performTurn = performTurn;
   window.toggleAnimation = toggleAnimation;
 })();

@@ -1,10 +1,42 @@
-2025-06-12 08:55:14.433 CDT [109] LOG:  checkpoint starting: time
-2025-06-12 08:55:14.764 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.314 s, sync=0.006 s, total=0.332 s; sync files=4, longest=0.003 s, average=0.002 s; distance=0 kB, estimate=1510 kB
-2025-06-12 18:00:24.677 CDT [109] LOG:  checkpoint starting: time
-2025-06-12 18:00:25.098 CDT [109] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.412 s, sync=0.003 s, total=0.422 s; sync files=5, longest=0.002 s, average=0.001 s; distance=3 kB, estimate=1359 kB
-2025-06-12 18:05:24.197 CDT [109] LOG:  checkpoint starting: time
-2025-06-12 18:05:24.310 CDT [109] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.104 s, sync=0.002 s, total=0.114 s; sync files=2, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=1224 kB
-2025-06-12 18:10:24.313 CDT [109] LOG:  checkpoint starting: time
-2025-06-12 18:10:24.424 CDT [109] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.002 s, total=0.112 s; sync files=2, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=1101 kB
-2025-06-12 18:15:24.520 CDT [109] LOG:  checkpoint starting: time
-2025-06-12 18:15:24.833 CDT [109] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.303 s, sync=0.003 s, total=0.313 s; sync files=4, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=991 kB
+2025-06-19 02:21:53.888 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 02:21:57.341 CDT [67] LOG:  checkpoint complete: wrote 35 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.434 s, sync=0.010 s, total=3.454 s; sync files=34, longest=0.003 s, average=0.001 s; distance=162 kB, estimate=162 kB
+2025-06-19 03:01:54.095 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 03:01:55.125 CDT [67] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.016 s, sync=0.005 s, total=1.031 s; sync files=9, longest=0.002 s, average=0.001 s; distance=1 kB, estimate=146 kB
+2025-06-19 04:08:57.929 CDT [19850] ERROR:  null value in column "name" of relation "maps" violates not-null constraint
+2025-06-19 04:08:57.929 CDT [19850] DETAIL:  Failing row contains (3, null, 8, 8, {"tiles": [[{"type": "floor", "walls": {"E": true, "N": true, "S..., 2025-06-19 04:08:57.925535).
+2025-06-19 04:08:57.929 CDT [19850] STATEMENT:  INSERT INTO maps (name, width, height, data) VALUES ($1, $2, $3, $4) RETURNING *
+2025-06-19 04:11:55.451 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 04:11:55.678 CDT [67] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.213 s, sync=0.003 s, total=0.228 s; sync files=3, longest=0.002 s, average=0.001 s; distance=0 kB, estimate=132 kB
+2025-06-19 05:51:57.338 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 05:51:57.767 CDT [67] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.414 s, sync=0.005 s, total=0.430 s; sync files=5, longest=0.003 s, average=0.001 s; distance=23 kB, estimate=121 kB
+2025-06-19 05:54:15.426 CDT [22045] ERROR:  syntax error at or near "start_y" at character 34
+2025-06-19 05:54:15.426 CDT [22045] STATEMENT:  UPDATE maps
+	SET start_x = 3,
+	SET start_y = 5,
+	SET start_dir = 0;
+2025-06-19 05:56:57.867 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 05:56:58.081 CDT [67] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.203 s, sync=0.005 s, total=0.215 s; sync files=3, longest=0.004 s, average=0.002 s; distance=1 kB, estimate=109 kB
+2025-06-19 06:16:57.482 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 06:16:57.798 CDT [67] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.306 s, sync=0.004 s, total=0.316 s; sync files=4, longest=0.002 s, average=0.001 s; distance=2 kB, estimate=98 kB
+2025-06-19 06:21:04.105 CDT [22099] ERROR:  syntax error at or near "SELECT" at character 24
+2025-06-19 06:21:04.105 CDT [22099] STATEMENT:  SELECT * FROM monsters
+	SELECT * FROM reports;
+2025-06-19 06:35:30.496 CDT [22257] ERROR:  null value in column "name" of relation "maps" violates not-null constraint
+2025-06-19 06:35:30.496 CDT [22257] DETAIL:  Failing row contains (5, null, 8, 8, {"tiles": [[{"type": "floor", "walls": {"E": false, "N": true, "..., 2025-06-19 06:35:30.494692, 1, 1, 0).
+2025-06-19 06:35:30.496 CDT [22257] STATEMENT:  INSERT INTO maps (name, width, height, data, start_x, start_y, start_dir) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
+2025-06-19 06:36:58.198 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 06:36:58.311 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.104 s, sync=0.003 s, total=0.113 s; sync files=2, longest=0.002 s, average=0.002 s; distance=0 kB, estimate=88 kB
+2025-06-19 06:51:58.611 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 06:51:58.726 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.004 s, total=0.115 s; sync files=2, longest=0.002 s, average=0.002 s; distance=2 kB, estimate=80 kB
+2025-06-19 06:56:58.826 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 06:56:58.937 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.111 s; sync files=2, longest=0.002 s, average=0.002 s; distance=2 kB, estimate=72 kB
+2025-06-19 07:06:59.137 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 07:06:59.250 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.113 s; sync files=2, longest=0.002 s, average=0.002 s; distance=3 kB, estimate=65 kB
+2025-06-19 07:26:59.650 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 07:26:59.763 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.113 s; sync files=2, longest=0.002 s, average=0.002 s; distance=5 kB, estimate=59 kB
+2025-06-19 07:31:59.863 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 07:31:59.974 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.102 s, sync=0.003 s, total=0.112 s; sync files=2, longest=0.002 s, average=0.002 s; distance=6 kB, estimate=54 kB
+2025-06-19 07:42:00.174 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 07:42:00.288 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.114 s; sync files=2, longest=0.002 s, average=0.002 s; distance=7 kB, estimate=49 kB
+2025-06-19 07:47:00.388 CDT [67] LOG:  checkpoint starting: time
+2025-06-19 07:47:00.499 CDT [67] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.103 s, sync=0.003 s, total=0.112 s; sync files=2, longest=0.002 s, average=0.002 s; distance=8 kB, estimate=45 kB

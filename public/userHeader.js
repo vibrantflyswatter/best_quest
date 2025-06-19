@@ -1,6 +1,6 @@
 async function insertUserHeader() {
   const header = document.createElement('div');
-  header.id = 'user-info';
+  header.id = 'user-header';
   header.style.cssText = `
     font-family: sans-serif;
     background: #222;
@@ -33,8 +33,8 @@ async function insertUserHeader() {
   .user-link:hover {
     text-decoration: underline;
   }
-  #user-info > span, 
-  #user-info > div {
+  #user-header > span, 
+  #user-header > div {
     display: flex;
     align-items: center;
   }
