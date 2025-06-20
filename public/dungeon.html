@@ -2,19 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dungeon Viewer</title>
   <style>
-  html {
-    scroll-behavior: auto;
-  }
+    html {
+      scroll-behavior: auto;
+    }
 
-  #container {
-  margin-top: 40px; /* fallback in case JS is delayed */
-}
-  
-</style>
-  <style>
+    #container {
+      margin-top: 40px; /* fallback in case JS is delayed */
+    }
+
     body {
       margin: 0;
       background: black;
@@ -22,22 +20,21 @@
       font-family: sans-serif;
     }
 
-    
     #container {
-  margin: 0 auto;
-  box-sizing: border-box;
-  text-align: center;
-  max-width: 640px;
-  width: 100%;
-}
+      margin: 0 auto;
+      box-sizing: border-box;
+      text-align: center;
+      max-width: 640px;
+      width: 100%;
+    }
 
-   #header {
-  margin-bottom: 4px;
-}
-   #header h2 {
-  margin: 4px 0;
-  font-size: 20px;
-}
+    #header {
+      margin-bottom: 4px;
+    }
+    #header h2 {
+      margin: 4px 0;
+      font-size: 20px;
+    }
 
     #gameCanvas {
       width: 100%;
@@ -68,11 +65,26 @@
     #controls button:hover {
       background-color: #333;
     }
+
     #playerPos {
-  margin-top: 10px;
-  font-size: 16px;
-  color: #ccc;
-}
+      margin-top: 10px;
+      font-size: 16px;
+      color: #ccc;
+      width: 100%;
+      text-align: center;
+    }
+
+    #mapNumberInput {
+      width: 80px;
+      padding: 6px;
+      font-size: 16px;
+      border: 1px solid #555;
+      background-color: #111;
+      color: white;
+      text-align: center;
+      flex: 0 0 auto;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -84,67 +96,48 @@
       <button onclick="performTurn('up')">↑</button>
       <button onclick="performTurn('right')">→</button>
       <button onclick="toggleAnimation()">Toggle Animation: <span id="animState">On</span></button>
+      <input type="number" id="mapNumberInput" min="1" placeholder="Map #" />
+      <button id="loadMapBtn">Load Map</button>
     </div>
     <div id="playerPos">Position: X0 Y0</div>
   </div>
+
   <script src="assets/js/dungeon.js"></script>
   <script src="/userHeader.js"></script>
+
   <script>
-  function alignContainerToHeader() {
-    const header = document.getElementById('user-header');
-    const container = document.getElementById('container');
+    // Align container margin top relative to user-header (optional from your original)
+    function alignContainerToHeader() {
+      const header = document.getElementById('user-header');
+      const container = document.getElementById('container');
 
-    if (!header || !container) {
-      requestAnimationFrame(alignContainerToHeader);
-      return;
+      if (!header || !container) {
+        requestAnimationFrame(alignContainerToHeader);
+        return;
+      }
+
+      const headerHeight = header.getBoundingClientRect().height;
+      container.style.marginTop = `${headerHeight}px`;
     }
+    requestAnimationFrame(alignContainerToHeader);
 
-    const headerHeight = header.getBoundingClientRect().height;
-    container.style.marginTop = `${headerHeight}px`;
-  }
+    // Add Load Map button functionality
+    document.getElementById('loadMapBtn').addEventListener('click', () => {
+      const input = document.getElementById('mapNumberInput');
+      const mapId = parseInt(input.value, 10);
+      if (!isNaN(mapId) && mapId > 0) {
+        loadMap(mapId);
+      } else {
+        alert('Please enter a valid positive map number.');
+      }
+    });
 
-  // Adjust right before paint
-  requestAnimationFrame(alignContainerToHeader);
-</script>
-<script>
-  function adjustForUserHeader() {
-    const header = document.getElementById('user-header');
-    const container = document.getElementById('container');
-
-    if (header && container) {
-      const height = header.getBoundingClientRect().height;
-      console.log('Header height:', height);
-      container.style.marginTop = `${height}px`;
-    } else {
-      console.warn('Header or container not found');
-    }
-  }
-// Try twice — once at load, and again after a short delay
-   window.addEventListener('load', () => {
-    adjustForUserHeader();
-    setTimeout(adjustForUserHeader, 100); // Optional recheck
-  });
-
-  // Also allow for re-adjustment on resize or dynamic login injection
-  window.addEventListener('resize', adjustForUserHeader);
-</script>
-<script>
-  function waitForHeaderAndAlign() {
-    const header = document.getElementById('user-header');
-    const container = document.getElementById('container');
-
-    if (!header || !container) {
-      requestAnimationFrame(waitForHeaderAndAlign);
-      return;
-    }
-
-    // When present, align immediately before layout finalizes
-    const height = header.getBoundingClientRect().height;
-    container.style.marginTop = `${height}px`;
-  }
-
-  // Fire this before any paint ideally, or at least before first frame settles
-  requestAnimationFrame(waitForHeaderAndAlign);
-</script>
+    // Also trigger Load Map on Enter key in input field
+    document.getElementById('mapNumberInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        document.getElementById('loadMapBtn').click();
+      }
+    });
+  </script>
 </body>
 </html>
