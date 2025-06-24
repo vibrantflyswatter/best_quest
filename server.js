@@ -5,6 +5,21 @@ const session = require('express-session');
 const app = express();
 const port = 3000;
 
+
+
+// Disable caching for specific pages and API routes
+app.use((req, res, next) => {
+  if (
+    req.path === '/dungeon.html' ||
+    req.path === '/monster_form.html' || // Optional: add more protected pages here
+    req.path.startsWith('/auth/me')
+  ) {
+    res.setHeader('Cache-Control', 'no-store');
+  }
+  next();
+});
+
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -15,6 +30,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+const DEV_MODE = true;
+if (DEV_MODE) {
+  const autoLogin = require('./middleware/devLogin');
+  app.use(autoLogin);
+}
 
 // HEAD check route -- no wildcards, pure Express-safe
 app.head('/headcheck', (req, res) => {
@@ -55,6 +75,8 @@ app.use('/dev/maps', mapRoutes);
 app.use('/dev/monsters', monsterRoutes); 
 app.use('/dev/reports', reportRoutes);
 app.use('/auth', userRoutes);
+
+
 
 // Start server
 app.listen(port, () => {

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Best Quest – Map Editor</title>
+<style>
+  /* Reset */
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: sans-serif;
+    background: #222;
+    overflow: hidden; /* prevent body scroll */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    background: #222;
+    color: white;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    z-index: 1000;
+    user-select: none;
+    max-width: 100vw;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+  }
+
+  /* Controls container inside header */
+  #wall-controls {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Inputs limited to 4 digits */
+  .digit4 {
+    width: 4ch;
+    font-family: monospace;
+  }
+
+  /* Main editor container fills space between header/footer */
+  #editor-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    background: #333;
+    position: relative;
+  }
+
+  /* Scroll container for grid scrollable both directions */
+  #grid-wrapper {
+    flex: 1 1 auto;
+    overflow: auto;
+    background: #333;
+    padding-bottom: 30px; /* footer height */
+  }
+
+  /* Grid itself */
+  #grid {
+    display: grid;
+    grid-auto-rows: 40px;
+    gap: 1px;
+    background: #111;
+    user-select: none;
+  }
+
+  /* Tiles and coord labels */
+  .tile, .coord-label {
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.75em;
+    border: 1px solid #999;
+    background: #ddd;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+
+  .coord-label {
+    background: #bbb;
+    font-weight: bold;
+    z-index: 3;
+  }
+
+  /* Sticky coords */
+  .sticky-x {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #bbb;
+  }
+
+  .sticky-y {
+    position: sticky;
+    left: 0;
+    z-index: 9;
+    background: #bbb;
+  }
+
+  .corner {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    background: #999;
+  }
+
+  /* Walls */
+  .wall {
+    position: absolute;
+    background: #333;
+  }
+  .wall.N {
+    top: 0; left: 0; right: 0; height: 5px;
+  }
+  .wall.S {
+    bottom: 0; left: 0; right: 0; height: 5px;
+  }
+  .wall.E {
+    right: 0; top: 0; bottom: 0; width: 5px;
+  }
+  .wall.W {
+    left: 0; top: 0; bottom: 0; width: 5px;
+  }
+
+  /* Selected tile */
+  .tile.selected {
+    outline: 2px solid red;
+  }
+
+  /* Start tile and arrow */
+  .start-tile {
+    background-color: #ffee88 !important;
+    position: relative;
+  }
+  .start-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+  }
+  .start-arrow.dir-0 {
+    border-bottom-color: red;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .start-arrow.dir-1 {
+    border-left-color: red;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .start-arrow.dir-2 {
+    border-top-color: red;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .start-arrow.dir-3 {
+    border-right-color: red;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Footer */
+  #footer-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 30px;
+    background: #222;
+    color: white;
+    text-align: right;
+    padding: 4px 10px;
+    font-size: 0.9em;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.3);
+    z-index: 1000;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  /* Responsive header wrap fix */
+  @media (max-width: 600px) {
+    header {
+      flex-wrap: wrap;
+    }
+    #wall-controls {
+      margin-left: 0;
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <label>Width: <input type="number" id="width" value="8" maxlength="4" inputmode="numeric" pattern="[0-9]*" class="digit4"></label>
+  <label>Height: <input type="number" id="height" value="8" maxlength="4" inputmode="numeric" pattern="[0-9]*" class="digit4"></label>
+  <button onclick="createGrid()">Generate Grid</button>
+  <button onclick="saveMap()">Save Map</button>
+  <button onclick="saveMapAs()">Save As</button>
+
+  <select id="map-select" onchange="loadSelectedMap()">
+    <option value="">-- Load Map --</option>
+  </select>
+
+  <div id="wall-controls">
+    <label><input type="checkbox" id="wall-N"> N</label>
+    <label><input type="checkbox" id="wall-E"> E</label>
+    <label><input type="checkbox" id="wall-S"> S</label>
+    <label><input type="checkbox" id="wall-W"> W</label>
+  </div>
+
+  <label style="margin-left: 20px;">
+    <input type="checkbox" id="auto-sync-walls" checked />
+    Auto-sync neighbor walls
+  </label>
+
+  <fieldset>
+    <legend>Starting Position</legend>
+    <label>X: <input type="number" id="startX" min="0" maxlength="4" inputmode="numeric" pattern="[0-9]*" class="digit4"></label>
+    <label>Y: <input type="number" id="startY" min="0" maxlength="4" inputmode="numeric" pattern="[0-9]*" class="digit4"></label>
+    <label>Dir:
+      <select id="startDir">
+        <option value="0">North</option>
+        <option value="1">East</option>
+        <option value="2">South</option>
+        <option value="3">West</option>
+      </select>
+    </label>
+  </fieldset>
+  <a href="dungeon.html">Dungeon Viewer</a> 
+</header>
+
+<div id="editor-container">
+  <div id="grid-wrapper">
+    <div id="grid"></div>
+  </div>
+</div>
+
+<footer id="footer-bar">
+  <div id="footer-content">
+    <span id="selected-coords-footer">Selected: (—, —)</span>
+  </div>
+</footer>
+
+<script>
+  let mapData = [];
+  let selectedTile = null;
+  let currentMapId = null;
+
+  // Wall checkbox listeners
+  ['N','E','S','W'].forEach(dir => {
+    document.getElementById(`wall-${dir}`).addEventListener('change', () => {
+      if (!selectedTile) return;
+      const tileData = selectedTile._tileData;
+      tileData.walls[dir] = document.getElementById(`wall-${dir}`).checked;
+      redrawTileWalls(selectedTile, tileData);
+      if (document.getElementById('auto-sync-walls').checked) {
+        syncNeighborWalls(selectedTile);
+      }
+    });
+  });
+
+  function redrawTileWalls(tileEl, tileData) {
+    tileEl.innerHTML = '';
+    for (const dir of ['N','E','S','W']) {
+      if(tileData.walls[dir]){
+        const wall = document.createElement('div');
+        wall.classList.add('wall', dir);
+        tileEl.appendChild(wall);
+      }
+    }
+    updateStartTileVisual();
+  }
+
+  function createGrid() {
+    const width = parseInt(document.getElementById('width').value);
+    const height = parseInt(document.getElementById('height').value);
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    grid.style.gridTemplateColumns = `repeat(${width + 1}, 40px)`; // +1 for y labels
+
+    mapData = [];
+
+    for(let y=-1; y < height; y++){
+      if(y >= 0) mapData.push([]);
+
+      for(let x=-1; x < width; x++){
+        const el = document.createElement('div');
+
+        if(x === -1 && y === -1){
+          el.className = 'coord-label corner';
+          el.textContent = '';
+        } else if(y === -1){
+          el.className = 'coord-label sticky-x';
+          el.textContent = x;
+        } else if(x === -1){
+          el.className = 'coord-label sticky-y';
+          el.textContent = y;
+        } else {
+          el.className = 'tile';
+          el.dataset.x = x;
+          el.dataset.y = y;
+          const tile = {type:'floor', walls: {N:false,E:false,S:false,W:false}};
+          mapData[y].push(tile);
+          el._tileData = tile;
+          el.onclick = () => {
+            if(selectedTile === el){
+              toggleWall(el, tile);
+              updateWallCheckboxes(tile);
+            } else {
+              selectTile(el, tile);
+            }
+          }
+        }
+        grid.appendChild(el);
+      }
+    }
+
+    selectedTile = null;
+    document.getElementById('selected-coords-footer').textContent = 'Selected: (—, —)';
+    ['N','E','S','W'].forEach(dir => {
+      document.getElementById(`wall-${dir}`).checked = false;
+    });
+    updateStartTileVisual();
+  }
+
+  function selectTile(tileEl, tileData) {
+    if(selectedTile) selectedTile.classList.remove('selected');
+    selectedTile = tileEl;
+    tileEl.classList.add('selected');
+
+    const x = tileEl.dataset.x;
+    const y = tileEl.dataset.y;
+    document.getElementById('selected-coords-footer').textContent = `Selected: (${x}, ${y})`;
+
+    updateWallCheckboxes(tileData);
+
+    selectedTile._tileData = tileData;
+  }
+
+  function updateWallCheckboxes(tileData){
+    ['N','E','S','W'].forEach(dir => {
+      document.getElementById(`wall-${dir}`).checked = tileData.walls[dir];
+    });
+  }
+
+  // Deselect on body click (except on controls or tiles)
+  document.body.addEventListener('click', e => {
+    const ignoreTags = ['BUTTON','INPUT','SELECT','LABEL','OPTION'];
+    if(ignoreTags.includes(e.target.tagName)) return;
+    if(e.target.classList.contains('tile')) return;
+
+    if(selectedTile){
+      if(document.getElementById('auto-sync-walls').checked){
+        syncNeighborWalls(selectedTile);
+      }
+      selectedTile.classList.remove('selected');
+      selectedTile = null;
+      document.getElementById('selected-coords-footer').textContent = 'Selected: (—, —)';
+      ['N','E','S','W'].forEach(dir => {
+        document.getElementById(`wall-${dir}`).checked = false;
+      });
+    }
+  });
+
+  const opposite = {N:'S',S:'N',E:'W',W:'E'};
+
+  function syncNeighborWalls(tileEl){
+    if(!tileEl) return;
+    const tileData = tileEl._tileData;
+    const x = parseInt(tileEl.dataset.x);
+    const y = parseInt(tileEl.dataset.y);
+
+    for(const dir of ['N','E','S','W']){
+      const hasWall = tileData.walls[dir];
+      let nx = x, ny = y;
+      if(dir === 'N') ny = y-1;
+      else if(dir === 'S') ny = y+1;
+      else if(dir === 'E') nx = x+1;
+      else if(dir === 'W') nx = x-1;
+
+      if(ny >= 0 && ny < mapData.length && nx >= 0 && nx < mapData[0].length){
+        const neighborTile = mapData[ny][nx];
+        if(neighborTile){
+          neighborTile.walls[opposite[dir]] = hasWall;
+          const neighborEl = document.querySelector(`.tile[data-x="${nx}"][data-y="${ny}"]`);
+          if(neighborEl){
+            redrawTileWalls(neighborEl, neighborTile);
+          }
+        }
+      }
+    }
+  }
+
+  const wallCycle = [
+    [],
+    ['N'],
+    ['E'],
+    ['S'],
+    ['W'],
+    ['N','S'],
+    ['W','E'],
+    ['N','E'],
+    ['E','S'],
+    ['S','W'],
+    ['W','N'],
+    ['W','N','E'],
+    ['N','E','S'],
+    ['E','S','W'],
+    ['S','W','N'],
+    ['N','E','S','W'],
+  ];
+
+  function arraysEqual(a,b){
+    if(a.length !== b.length) return false;
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    return sortedA.every((v,i) => v === sortedB[i]);
+  }
+
+  function toggleWall(tileEl, tileData){
+    const currentWalls = Object.entries(tileData.walls).filter(([_, val]) => val).map(([key,_]) => key);
+    let currentIndex = wallCycle.findIndex(set => arraysEqual(set, currentWalls));
+    if(currentIndex === -1) currentIndex = -1;
+    const nextIndex = (currentIndex + 1) % wallCycle.length;
+    const newWalls = wallCycle[nextIndex];
+    tileData.walls = {N:false,E:false,S:false,W:false};
+    for(const w of newWalls) tileData.walls[w] = true;
+    redrawTileWalls(tileEl, tileData);
+    updateWallCheckboxes(tileData);
+    if(document.getElementById('auto-sync-walls').checked) syncNeighborWalls(tileEl);
+  }
+
+  function updateStartTileVisual(){
+    document.querySelectorAll('.start-tile').forEach(el => {
+      el.classList.remove('start-tile');
+      const arrow = el.querySelector('.start-arrow');
+      if(arrow) arrow.remove();
+    });
+
+    const x = parseInt(document.getElementById('startX').value);
+    const y = parseInt(document.getElementById('startY').value);
+    const dir = parseInt(document.getElementById('startDir').value);
+
+    if(isNaN(x) || isNaN(y)) return;
+
+    const tileEl = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+    if(!tileEl) return;
+
+    tileEl.classList.add('start-tile');
+    const arrow = document.createElement('div');
+    arrow.className = `start-arrow dir-${dir}`;
+    tileEl.appendChild(arrow);
+  }
+
+  // Enforce max length of 4 on inputs with class 'digit4'
+  document.querySelectorAll('.digit4').forEach(input => {
+    input.addEventListener('input', () => {
+      if(input.value.length > 4){
+        input.value = input.value.slice(0,4);
+      }
+    });
+  });
+
+  // Initialize grid on page load
+  createGrid();
+
+  // Update start tile when inputs change
+  ['startX', 'startY', 'startDir'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateStartTileVisual);
+    document.getElementById(id).addEventListener('change', updateStartTileVisual);
+  });
+</script>
+</body>
+</html>

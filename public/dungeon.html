@@ -1,143 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dungeon Viewer</title>
-  <style>
-    html {
-      scroll-behavior: auto;
-    }
+ <style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: white;
+    font-family: sans-serif;
+  }
 
-    #container {
-      margin-top: 40px; /* fallback in case JS is delayed */
-    }
+  /* Global no text selection & no long-press everywhere */
+  * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -ms-user-select: none !important;
+    -webkit-touch-callout: none !important;
+  }
 
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      font-family: sans-serif;
-    }
+  #user-header {
+    font-family: sans-serif;
+    background: #222;
+    color: #eee;
+    padding: 0.25em 1em;
+    font-size: 0.85em;
+    line-height: 1.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
 
-    #container {
-      margin: 0 auto;
-      box-sizing: border-box;
-      text-align: center;
-      max-width: 640px;
-      width: 100%;
-    }
+  .user-link {
+    color: #0af;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .user-link:hover {
+    text-decoration: underline;
+  }
 
-    #header {
-      margin-bottom: 4px;
-    }
-    #header h2 {
-      margin: 4px 0;
-      font-size: 20px;
-    }
+  #container {
+    margin: 0 auto;
+    max-width: 640px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
 
-    #gameCanvas {
-      width: 100%;
-      height: auto;
-      background-color: black;
-      border: 1px solid #444;
-      display: block;
-    }
+  #gameCanvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    background-color: black;
+    border: none;
+  }
 
-    #controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 10px;
-    }
+  #canvasWrapper {
+    position: sticky;
+    top: 1.0em;
+    display: block;
+    width: 100%;
+    max-width: 640px;
+    aspect-ratio: 4 / 3;
+    margin: 0 auto;
+    background: black;
+    border: 2px solid #eee;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
 
-    #controls button {
-      flex: 1 0 30%;
-      font-size: 16px;
-      padding: 10px;
-      background-color: #222;
-      color: white;
-      border: 1px solid #555;
-      cursor: pointer;
-    }
+  #canvasWrapper canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 
-    #controls button:hover {
-      background-color: #333;
-    }
+  @keyframes shake {
+    0%   { transform: translate(0px, 0px); }
+    20%  { transform: translate(-4px, 0px); }
+    40%  { transform: translate(4px, 0px); }
+    60%  { transform: translate(-3px, 0px); }
+    80%  { transform: translate(3px, 0px); }
+    100% { transform: translate(0px, 0px); }
+  }
 
-    #playerPos {
-      margin-top: 10px;
-      font-size: 16px;
-      color: #ccc;
-      width: 100%;
-      text-align: center;
-    }
+  #canvasWrapper.shake {
+    animation: shake 0.25s ease;
+  }
 
-    #mapNumberInput {
-      width: 80px;
-      padding: 6px;
-      font-size: 16px;
-      border: 1px solid #555;
-      background-color: #111;
-      color: white;
-      text-align: center;
-      flex: 0 0 auto;
-      border-radius: 4px;
-    }
-  </style>
+  #canvasOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(50, 50, 50, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    pointer-events: none;
+    display: none;
+  }
+
+  #standbyClock {
+    position:absolute;
+    top: 8px;
+    right: 8px;
+    width: 80px;
+    height: 80px;
+    max-width: 20vw;
+    max-height: 20vw;
+    image-rendering: pixelated;
+    pointer-events: none;
+    display:none;
+  }
+
+  #controlsTop,
+  #actionRow {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0;
+  }
+
+  #controlsTop button,
+  #actionRow button {
+    flex: 1 0 30%;
+    font-size: 16px;
+    padding: 10px;
+    background-color: #222;
+    color: white;
+    border: 1px solid #555;
+    cursor: pointer;
+  }
+
+  #controlsTop button:hover,
+  #actionRow button:hover {
+    background-color: #333;
+  }
+
+  #infoBox {
+    margin: 10px auto;
+    padding: 8px;
+    min-height: 1.5em;
+    background: #111;
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 17px;
+    color: #ccc;
+    transition: opacity 0.3s ease;
+    max-width: 640px;
+  }
+
+  #playerPos {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #ccc;
+  }
+
+  @keyframes flashHighlight {
+  0%   { background-color: #0af; color: #000; }
+  100% { background-color: #222; color: white; }
+}
+
+.button-flash {
+  animation: flashHighlight 0.3s ease;
+}
+
+  #controlsBottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #111;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    border-top: 1px solid #333;
+    z-index: 999;
+  }
+
+  #controlsBottom input,
+  #controlsBottom button {
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background: #222;
+    color: white;
+  }
+
+  #controlsBottom.hidden {
+  display: none;
+}
+
+  #dialogBox {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 12px 20px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    max-width: 90%;
+    font-size: 16px;
+    z-index: 1000;
+    box-shadow: 0 0 8px #000;
+  }
+</style>
 </head>
 <body>
+  <div id="user-header">Loading...</div>
+
   <div id="container">
-    <div id="header"><h2> </h2></div>
-    <canvas id="gameCanvas" width="640" height="480"></canvas>
-    <div id="controls">
+    <div id="canvasWrapper">
+      <canvas id="gameCanvas" width="640" height="480"></canvas>
+      <div id="canvasOverlay">
+        <img id="standbyClock" src="assets/images/other/clock.png" alt="Clock" />
+      </div>
+    </div>
+
+    <div id="controlsTop">
       <button onclick="performTurn('left')">←</button>
       <button onclick="performTurn('up')">↑</button>
       <button onclick="performTurn('right')">→</button>
-      <button onclick="toggleAnimation()">Toggle Animation: <span id="animState">On</span></button>
-      <input type="number" id="mapNumberInput" min="1" placeholder="Map #" />
-      <button id="loadMapBtn">Load Map</button>
     </div>
+
+    <div id="actionRow">
+      <button id="footerToggleX">✖</button>
+      <button onclick="performTurn('down')">↓</button>
+      <button onclick="performTurn('standby')">◯</button>
+    </div>
+
+    <div id="infoBox">Please wait :)</div>
     <div id="playerPos">Position: X0 Y0</div>
   </div>
 
-  <script src="assets/js/dungeon.js"></script>
-  <script src="/userHeader.js"></script>
+  <div id="controlsBottom">
+    <button onclick="toggleAnimation()">Toggle Animation: <span id="animState">On</span></button>
+    <input type="number" id="mapNumberInput" min="1" placeholder="Map #" />
+    <button id="loadMapBtn">Load Map</button>
+  </div>
 
-  <script>
-    // Align container margin top relative to user-header (optional from your original)
-    function alignContainerToHeader() {
-      const header = document.getElementById('user-header');
-      const container = document.getElementById('container');
+  <div id="dialogBox">
+    <span id="dialogText">Hello world.</span>
+    <div style="text-align: right; margin-top: 10px;">
+      <button onclick="hideDialog()" style="
+        background: #222;
+        color: white;
+        border: 1px solid #555;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+      ">OK</button>
+    </div>
+  </div>
 
-      if (!header || !container) {
-        requestAnimationFrame(alignContainerToHeader);
-        return;
-      }
+  <script src="assets/js/dungeon-ui.js"></script>
 
-      const headerHeight = header.getBoundingClientRect().height;
-      container.style.marginTop = `${headerHeight}px`;
-    }
-    requestAnimationFrame(alignContainerToHeader);
+<script>
+(async () => {
+  await insertUserHeader();
 
-    // Add Load Map button functionality
-    document.getElementById('loadMapBtn').addEventListener('click', () => {
-      const input = document.getElementById('mapNumberInput');
-      const mapId = parseInt(input.value, 10);
-      if (!isNaN(mapId) && mapId > 0) {
-        loadMap(mapId);
-      } else {
-        alert('Please enter a valid positive map number.');
-      }
-    });
+  try {
+    const res = await fetch('/auth/me');
+    if (!res.ok) throw new Error('Not logged in');
+    const user = await res.json();
 
-    // Also trigger Load Map on Enter key in input field
-    document.getElementById('mapNumberInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        document.getElementById('loadMapBtn').click();
-      }
-    });
-  </script>
+    const script = document.createElement('script');
+script.src = 'assets/js/dungeon-core.js';
+script.defer = true;
+script.onload = () => console.log('Dungeon core loaded.');
+script.onerror = () => {
+  console.error("Failed to load dungeon-core.js");
+  showMessage("Could not load dungeon scripts. Please try again later.");
+};
+document.body.appendChild(script);
+  } catch {
+    showMessage(`
+      You must <a href="/login.html" class="user-link">Log In</a> or 
+      <a href="/register.html" class="user-link">Sign Up</a> to play Best Quest.
+    `, 60000, true);
+  }
+})();
+</script>
 </body>
 </html>

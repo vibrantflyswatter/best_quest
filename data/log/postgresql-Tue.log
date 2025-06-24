@@ -1,0 +1,4 @@
+2025-06-24 01:48:12.516 CDT [42] LOG:  checkpoint starting: time
+2025-06-24 01:48:12.846 CDT [42] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.312 s, sync=0.005 s, total=0.331 s; sync files=4, longest=0.004 s, average=0.002 s; distance=8 kB, estimate=8 kB
+2025-06-24 01:53:12.946 CDT [42] LOG:  checkpoint starting: time
+2025-06-24 01:53:13.066 CDT [42] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.105 s, sync=0.003 s, total=0.120 s; sync files=2, longest=0.002 s, average=0.002 s; distance=6 kB, estimate=8 kB
