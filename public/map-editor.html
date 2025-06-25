@@ -5,197 +5,280 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Best Quest – Map Editor</title>
   <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
+  body {
+  margin: 0;
+  font-family: sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-    header {
-      position: sticky;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100vw;
-      background: #222;
-      color: white;
-      padding: 10px;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      z-index: 10;
-    }
+header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #222;
+  color: white;
+  padding: 10px;
+  box-sizing: border-box;
+  z-index: 10;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+}
 
-    footer {
-      position: sticky;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100vw;
-      background: #222;
-      color: white;
-      padding: 10px;
-      box-sizing: border-box;
-      z-index: 10;
-      height: 20px;
-      display: flex;
-      align-items: center;
-    }
+footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #222;
+  color: white;
+  padding: 10px;
+  box-sizing: border-box;
+  z-index: 10;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
 
-    #editor-container {
-      flex: 1;
-      overflow: hidden;
-    }
+header,
+footer {
+  flex-shrink: 0;
+}
 
-    #grid-wrapper {
-      padding: 0;
-      overflow: auto;
-      max-height: calc(100vh - 120px);
-      max-width: 100%;
-      border: 1px solid #444;
-    }
+.tab-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  border: 1px solid #666;
+  padding: 5px;
+  margin: 4px 0;
+  position: relative;
+}
 
-    #grid {
-      display: grid;
-      background: #333;
-    }
+.tab-selector {
+  top: 5px;
+  right: 5px;
+}
 
-    .tile, .coord-label {
-      width: 40px;
-      height: 40px;
-      box-sizing: border-box;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 0.75em;
-      border: 1px solid #999;
-    }
+.tab-selector select {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 3px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+}
 
-    .tile {
-      background: #ddd;
-      position: relative;
-      cursor: pointer;
-    }
+.tab-selector select:hover {
+  background: #555;
+}
 
-    .tile.selected {
-      outline: 2px solid red;
-    }
+.tab-selector select:focus {
+  outline: none;
+  background: #666;
+}
 
-    .wall {
-      position: absolute;
-      background: #333;
-    }
-    .wall.N { top: 0; left: 0; right: 0; height: 5px; }
-    .wall.S { bottom: 0; left: 0; right: 0; height: 5px; }
-    .wall.E { right: 0; top: 0; bottom: 0; width: 5px; }
-    .wall.W { left: 0; top: 0; bottom: 0; width: 5px; }
+fieldset {
+  border: 1px solid #888;
+  padding: 5px 10px;
+  margin: 4px 0;
+}
 
-    .coord-label {
-      background: #bbb;
-      font-weight: bold;
-      z-index: 2;
-    }
+#editor-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
 
-    .sticky-x {
-      position: sticky;
-      top: 0;
-      z-index: 3;
-      background: #999;
-    }
+#grid-wrapper {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #444;
+  padding-bottom: 80px;
+  background: #333
+}
 
-    .sticky-y {
-      position: sticky;
-      left: 0;
-      z-index: 5;
-      background: #999;
-    }
+#toggle-header:hover {
+  color: #ddd;
+}
 
-    .corner {
-      width: 40px;
-      height: 40px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #999;
-      z-index: 6;
-      position: sticky;
-      top: 0;
-      left: 0;
-    }
+header.collapsed {
+  display: none;
+}
 
-    .start-tile {
-      background-color: #ffee88 !important;
-      position: relative;
-    }
+#grid {
+  display: grid;
+  background: #333;
+}
 
-    .start-arrow {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border: 10px solid transparent;
-    }
+.tile, .coord-label {
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75em;
+  border: 1px solid #999;
+}
 
-    .start-arrow.dir-0 { border-bottom-color: red; top: 4px; left: 50%; transform: translateX(-50%); }
-    .start-arrow.dir-1 { border-left-color: red; right: 4px; top: 50%; transform: translateY(-50%); }
-    .start-arrow.dir-2 { border-top-color: red; bottom: 4px; left: 50%; transform: translateX(-50%); }
-    .start-arrow.dir-3 { border-right-color: red; left: 4px; top: 50%; transform: translateY(-50%); }
+.tile {
+  background: #ddd;
+  position: relative;
+  cursor: pointer;
+}
 
-   .wall, .start-arrow {
-     pointer-events: none;
-    }
+.tile.selected {
+  outline: 2px solid red;
+}
 
-    /*digit restriction for grid resizer*/
-    .digit4 {
-      width: 4ch;
-      font-family: monospace;
-    }
+.wall {
+  position: absolute;
+  background: #333;
+}
+.wall.N { top: 0; left: 0; right: 0; height: 5px; }
+.wall.S { bottom: 0; left: 0; right: 0; height: 5px; }
+.wall.E { right: 0; top: 0; bottom: 0; width: 5px; }
+.wall.W { left: 0; top: 0; bottom: 0; width: 5px; }
+
+.coord-label {
+  background: #bbb;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.sticky-x {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #999;
+}
+
+.sticky-y {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: #999;
+}
+
+.corner {
+  width: 40px;
+  height: 40px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #999;
+  z-index: 6;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+.start-tile {
+  background-color: #ffee88 !important;
+  position: relative;
+}
+
+.start-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+}
+
+.start-arrow.dir-0 { border-bottom-color: red; top: 4px; left: 50%; transform: translateX(-50%); }
+.start-arrow.dir-1 { border-left-color: red; right: 4px; top: 50%; transform: translateY(-50%); }
+.start-arrow.dir-2 { border-top-color: red; bottom: 4px; left: 50%; transform: translateX(-50%); }
+.start-arrow.dir-3 { border-right-color: red; left: 4px; top: 50%; transform: translateY(-50%); }
+
+.wall, .start-arrow {
+  pointer-events: none;
+}
+
+.digit4 {
+  width: 4ch;
+  font-family: monospace;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  header, footer {
+    padding: 6px;
+  }
+
+  .tab-content {
+    gap: 6px;
+  }
+}
+
   </style>
 </head>
 <body>
   <header>
-    <label>Width: <input type="number" id="width" value="8" maxlength="4" class="digit4"></label>
-    <label>Height: <input type="number" id="height" value="8" maxlength="4" class="digit4"></label>
-    <button onclick="createGrid()">Resize Grid</button>
-    <button onclick="newMap()">New Map</button>
-    <button onclick="saveMap()">Save Map</button>
-    <button onclick="saveMapAs()">Save As</button>
-    <select id="map-select" onchange="loadSelectedMap()">
-      <option value="">-- Load Map --</option>
-    </select>
-    <div id="wall-controls" style="margin-left: auto; display: flex; gap: 2px;">
-      <label><input type="checkbox" id="wall-N"> N</label>
-      <label><input type="checkbox" id="wall-E"> E</label>
-      <label><input type="checkbox" id="wall-S"> S</label>
-      <label><input type="checkbox" id="wall-W"> W</label>
-    </div>
-    <label style="margin-left: 20px;">
-      <input type="checkbox" id="auto-sync-walls" checked />
-      Thicc Walls
-    </label>
-    <label style="margin-left: 20px;">
-  <input type="checkbox" id="toggle-all-mode">
-  Square Mode
-</label>
-    <fieldset>
-      <legend>Starting Position</legend>
-      <label>X: <input type="number" id="startX" min="0" maxlength="4" class="digit4"></label>
-      <label>Y: <input type="number" id="startY" min="0" maxlength="4" class="digit4"></label>
-      <label>Dir:
-        <select id="startDir">
-          <option value="0">North</option>
-          <option value="1">East</option>
-          <option value="2">South</option>
-          <option value="3">West</option>
+    <div class="tab-content">
+      <div class="tab-selector">
+        <select id="tab-selector">
+          <option value="file">File</option>
+          <option value="edit">Edit</option>
+          <option value="props">Param</option>
         </select>
-      </label>
-    </fieldset>
-    <a href="dungeon.html">Dungeon Viewer</a>
+      </div>
+      
+      <div class="tab-section" data-tab="file">
+        <button onclick="newMap()">New Map</button>
+        <button onclick="saveMap()">Save Map</button>
+        <button onclick="saveMapAs()">Save As</button>
+        <fieldset>
+          <legend>Load Map</legend>
+          <select id="map-select" onchange="loadSelectedMap()">
+            <option value="">-- Load Map --</option>
+          </select>
+        </fieldset>
+        <a href="dungeon.html">Dungeon Viewer</a>
+      </div>
+
+      <div class="tab-section" data-tab="edit" hidden>
+        <fieldset id="wall-controls">
+          <legend>Wall Controls</legend>
+          <label><input type="checkbox" id="wall-N"> N</label>
+          <label><input type="checkbox" id="wall-E"> E</label>
+          <label><input type="checkbox" id="wall-S"> S</label>
+          <label><input type="checkbox" id="wall-W"> W</label>
+        </fieldset>
+        <label><input type="checkbox" id="auto-sync-walls" checked /> Thicc Walls</label>
+        <label><input type="checkbox" id="toggle-all-mode"> Square Mode</label>
+      </div>
+
+      <div class="tab-section" data-tab="props" hidden>
+        <label>Width: <input type="number" id="width" value="16" maxlength="4" class="digit4"></label>
+        <label>Height: <input type="number" id="height" value="16" maxlength="4" class="digit4"></label>
+        <button onclick="createGrid()">Resize Grid</button>
+        <fieldset>
+          <legend>Starting Position</legend>
+          <label>X: <input type="number" id="startX" min="0" maxlength="4" class="digit4"></label>
+          <label>Y: <input type="number" id="startY" min="0" maxlength="4" class="digit4"></label>
+          <label>Dir:
+            <select id="startDir">
+              <option value="0">North</option>
+              <option value="1">East</option>
+              <option value="2">South</option>
+              <option value="3">West</option>
+            </select>
+          </label>
+        </fieldset>
+      </div>
+    </div>
   </header>
 
   <div id="editor-container">
@@ -208,7 +291,11 @@
     </div>
   </div>
 
-  <footer id="selected-coords">Selected: (—, —)</footer>
+ <footer>
+  <span id="selected-coords">Selected: (—, —)</span>
+  &nbsp; | &nbsp;
+  <span id="toggle-header" style="cursor: pointer; text-decoration: underline;">Toggle Header</span>
+</footer>
 
    <script>
     let mapData = [];
@@ -227,93 +314,93 @@
       updateStartTileVisual();
     }
 
-   function createGrid(forceClear = false) {
-  const width = parseInt(document.getElementById('width').value);
-  const height = parseInt(document.getElementById('height').value);
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  grid.style.gridTemplateColumns = `repeat(${width + 1}, 40px)`;
+    function createGrid(forceClear = false) {
+      const width = parseInt(document.getElementById('width').value);
+      const height = parseInt(document.getElementById('height').value);
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      grid.style.gridTemplateColumns = `repeat(${width + 1}, 40px)`;
 
-  const oldWidth = mapData?.[0]?.length || 0;
-  const oldHeight = mapData?.length || 0;
+      const oldWidth = mapData?.[0]?.length || 0;
+      const oldHeight = mapData?.length || 0;
 
-  const downsizing = width < oldWidth || height < oldHeight;
+      const downsizing = width < oldWidth || height < oldHeight;
 
-  if (!forceClear && downsizing) {
-    const proceed = confirm(`Warning: Reducing grid size will erase data outside the ${width}×${height} bounds. Proceed?`);
-    if (!proceed) {
-      // Revert inputs
-      document.getElementById('width').value = oldWidth;
-      document.getElementById('height').value = oldHeight;
-      return;
-    }
-  }
-
-  const oldData = forceClear ? null : mapData;
-  mapData = [];
-
-  for (let y = 0; y < height; y++) {
-    const row = [];
-    for (let x = 0; x < width; x++) {
-      let tile;
-      if (oldData?.[y]?.[x]) {
-        tile = JSON.parse(JSON.stringify(oldData[y][x]));
-      } else {
-        tile = { type: 'floor', walls: { N: false, E: false, S: false, W: false } };
-      }
-      row.push(tile);
-    }
-    mapData.push(row);
-  }
-
-  for (let y = -1; y < height; y++) {
-    for (let x = -1; x < width; x++) {
-      const el = document.createElement('div');
-
-      if (x === -1 && y === -1) {
-        el.className = 'coord-label corner';
-        el.textContent = '';
-      } else if (y === -1) {
-        el.className = 'coord-label sticky-x';
-        el.textContent = x;
-      } else if (x === -1) {
-        el.className = 'coord-label sticky-y';
-        el.textContent = y;
-      } else {
-        const tile = mapData[y][x];
-        el.className = 'tile';
-        el.dataset.x = x;
-        el.dataset.y = y;
-        el._tileData = tile;
-        el.onclick = (e) => {
-        e.stopPropagation(); // ensure clicks on child elements don't bubble away
-
-         if (selectedTile === el) {
-           toggleWall(el, tile);
-           updateWallCheckboxes(tile);
-       } else {
-     selectTile(el, tile);
-  }
-};
-
-        redrawTileWalls(el, tile);
+      if (!forceClear && downsizing) {
+        const proceed = confirm(`Warning: Reducing grid size will erase data outside the ${width}×${height} bounds. Proceed?`);
+        if (!proceed) {
+          // Revert inputs
+          document.getElementById('width').value = oldWidth;
+          document.getElementById('height').value = oldHeight;
+          return;
+        }
       }
 
-      grid.appendChild(el);
-    }
-  }
+      const oldData = forceClear ? null : mapData;
+      mapData = [];
 
-  selectedTile = null;
-  document.getElementById('selected-coords').textContent = 'Selected: (—, —)';
-  ['N', 'E', 'S', 'W'].forEach(d => document.getElementById(`wall-${d}`).checked = false);
-  updateStartTileVisual();
-}
+      for (let y = 0; y < height; y++) {
+        const row = [];
+        for (let x = 0; x < width; x++) {
+          let tile;
+          if (oldData?.[y]?.[x]) {
+            tile = JSON.parse(JSON.stringify(oldData[y][x]));
+          } else {
+            tile = { type: 'floor', walls: { N: false, E: false, S: false, W: false } };
+          }
+          row.push(tile);
+        }
+        mapData.push(row);
+      }
+
+      for (let y = -1; y < height; y++) {
+        for (let x = -1; x < width; x++) {
+          const el = document.createElement('div');
+
+          if (x === -1 && y === -1) {
+            el.className = 'coord-label corner';
+            el.textContent = '';
+          } else if (y === -1) {
+            el.className = 'coord-label sticky-x';
+            el.textContent = x;
+          } else if (x === -1) {
+            el.className = 'coord-label sticky-y';
+            el.textContent = y;
+          } else {
+            const tile = mapData[y][x];
+            el.className = 'tile';
+            el.dataset.x = x;
+            el.dataset.y = y;
+            el._tileData = tile;
+            el.onclick = (e) => {
+              e.stopPropagation(); // ensure clicks on child elements don't bubble away
+
+              if (selectedTile === el) {
+                toggleWall(el, tile);
+                updateWallCheckboxes(tile);
+              } else {
+                selectTile(el, tile);
+              }
+            };
+
+            redrawTileWalls(el, tile);
+          }
+
+          grid.appendChild(el);
+        }
+      }
+
+      selectedTile = null;
+      document.getElementById('selected-coords').textContent = 'Selected: (—, —)';
+      ['N', 'E', 'S', 'W'].forEach(d => document.getElementById(`wall-${d}`).checked = false);
+      updateStartTileVisual();
+    }
 
     function selectTile(tileEl, tileData) {
       if (selectedTile) selectedTile.classList.remove('selected');
       selectedTile = tileEl;
       tileEl.classList.add('selected');
-      document.getElementById('selected-coords').textContent = `Selected: (${tileEl.dataset.x}, ${tileEl.dataset.y})`;
+document.getElementById('selected-coords').textContent = `Selected: (${tileEl.dataset.x}, ${tileEl.dataset.y})`;
       updateWallCheckboxes(tileData);
       selectedTile._tileData = tileData;
     }
@@ -325,33 +412,33 @@
     }
 
     function toggleWall(tileEl, tileData) {
-  const toggleAll = document.getElementById('toggle-all-mode').checked;
+      const toggleAll = document.getElementById('toggle-all-mode').checked;
 
-  if (toggleAll) {
-    // Count how many walls are active
-    const wallsOn = Object.values(tileData.walls).filter(Boolean).length;
-    const turnOn = wallsOn < 4;
-    tileData.walls = { N: turnOn, E: turnOn, S: turnOn, W: turnOn };
-  } else {
-    const currentWalls = Object.entries(tileData.walls).filter(([_, v]) => v).map(([k]) => k);
-    const wallCycle = [
-      [], ['N'], ['E'], ['S'], ['W'], ['N','S'], ['W','E'],
-      ['N','E'], ['E','S'], ['S','W'], ['W','N'], ['W','N','E'],
-      ['N','E','S'], ['E','S','W'], ['S','W','N'], ['N','E','S','W']
-    ];
-    const idx = wallCycle.findIndex(set => set.length === currentWalls.length && set.every(w => currentWalls.includes(w)));
-    const next = wallCycle[(idx + 1) % wallCycle.length];
-    tileData.walls = { N: false, E: false, S: false, W: false };
-    next.forEach(w => tileData.walls[w] = true);
-  }
+      if (toggleAll) {
+        // Count how many walls are active
+        const wallsOn = Object.values(tileData.walls).filter(Boolean).length;
+        const turnOn = wallsOn < 4;
+        tileData.walls = { N: turnOn, E: turnOn, S: turnOn, W: turnOn };
+      } else {
+        const currentWalls = Object.entries(tileData.walls).filter(([_, v]) => v).map(([k]) => k);
+        const wallCycle = [
+          [], ['N'], ['E'], ['S'], ['W'], ['N','S'], ['W','E'],
+          ['N','E'], ['E','S'], ['S','W'], ['W','N'], ['W','N','E'],
+          ['N','E','S'], ['E','S','W'], ['S','W','N'], ['N','E','S','W']
+        ];
+        const idx = wallCycle.findIndex(set => set.length === currentWalls.length && set.every(w => currentWalls.includes(w)));
+        const next = wallCycle[(idx + 1) % wallCycle.length];
+        tileData.walls = { N: false, E: false, S: false, W: false };
+        next.forEach(w => tileData.walls[w] = true);
+      }
 
-  redrawTileWalls(tileEl, tileData);
-  updateWallCheckboxes(tileData);
+      redrawTileWalls(tileEl, tileData);
+      updateWallCheckboxes(tileData);
 
-  if (document.getElementById('auto-sync-walls').checked) {
-    syncNeighborWalls(tileEl);
-  }
-}
+      if (document.getElementById('auto-sync-walls').checked) {
+        syncNeighborWalls(tileEl);
+      }
+    }
 
     function syncNeighborWalls(tileEl) {
       if (!tileEl) return;
@@ -387,32 +474,32 @@
       }
     });
 
-   function updateStartTileVisual() {
-  // Clear old highlight
-  document.querySelectorAll('.start-tile').forEach(el => {
-    el.classList.remove('start-tile');
-    const arrow = el.querySelector('.start-arrow');
-    if (arrow) arrow.remove();
-  });
+    function updateStartTileVisual() {
+      // Clear old highlight
+      document.querySelectorAll('.start-tile').forEach(el => {
+        el.classList.remove('start-tile');
+        const arrow = el.querySelector('.start-arrow');
+        if (arrow) arrow.remove();
+      });
 
-  const x = parseInt(document.getElementById('startX').value);
-  const y = parseInt(document.getElementById('startY').value);
-  const dir = parseInt(document.getElementById('startDir').value);
+      const x = parseInt(document.getElementById('startX').value);
+      const y = parseInt(document.getElementById('startY').value);
+      const dir = parseInt(document.getElementById('startDir').value);
 
-  if (isNaN(x) || isNaN(y)) return;
+      if (isNaN(x) || isNaN(y)) return;
 
-  if (y < 0 || y >= mapData.length || x < 0 || x >= mapData[0].length) {
-    return; // outside bounds
-  }
+      if (y < 0 || y >= mapData.length || x < 0 || x >= mapData[0].length) {
+        return; // outside bounds
+      }
 
-  const tileEl = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
-  if (!tileEl) return;
+      const tileEl = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+      if (!tileEl) return;
 
-  tileEl.classList.add('start-tile');
+      tileEl.classList.add('start-tile');
 
-  const arrow = document.createElement('div');
-  arrow.className = `start-arrow dir-${dir}`;
-  tileEl.appendChild(arrow);
+      const arrow = document.createElement('div');
+      arrow.className = `start-arrow dir-${dir}`;
+      tileEl.appendChild(arrow);
     }
 
     async function fetchMapList() {
@@ -448,9 +535,9 @@
     }
 
     async function saveMap() {
-       if (!currentMapId) {
-    return saveMapAs(); // fallback if no map loaded
-  }
+      if (!currentMapId) {
+        return saveMapAs(); // fallback if no map loaded
+      }
       const currentOption = document.querySelector("#map-select option:checked");
       let defaultName = currentOption?.textContent?.replace(/\s*\(#\d+\)$/, '') || '';
       const name = prompt("!Overwriting Map!", defaultName);
@@ -479,21 +566,20 @@
       document.getElementById('map-select').value = currentMapId;
     }
 
-function newMap() {
-  const confirmNew = confirm("This will clear the current map. Continue?");
-  if (!confirmNew) return;
+    function newMap() {
+      const confirmNew = confirm("This will clear the current map. Continue?");
+      if (!confirmNew) return;
 
-  currentMapId = null;
-  document.getElementById("map-select").value = "";
-  document.getElementById("startX").value = 0;
-  document.getElementById("startY").value = 0;
-  document.getElementById("startDir").value = 0;
-  document.getElementById("width").value = 8;
-  document.getElementById("height").value = 8;
+      currentMapId = null;
+      document.getElementById("map-select").value = "";
+      document.getElementById("startX").value = 0;
+      document.getElementById("startY").value = 0;
+      document.getElementById("startDir").value = 0;
+      document.getElementById("width").value = 8;
+      document.getElementById("height").value = 8;
 
-  createGrid(true); // force clear
-}
-
+      createGrid(true); // force clear
+    }
 
     async function saveMapAs() {
       const currentOption = document.querySelector("#map-select option:checked");
@@ -524,31 +610,41 @@ function newMap() {
       document.getElementById('map-select').value = currentMapId;
     }
 
-function validateStartPosition() {
-  let x = parseInt(document.getElementById('startX').value);
-  let y = parseInt(document.getElementById('startY').value);
+    function validateStartPosition() {
+      let x = parseInt(document.getElementById('startX').value);
+      let y = parseInt(document.getElementById('startY').value);
 
-  const maxX = mapData?.[0]?.length - 1 ?? 0;
-  const maxY = mapData?.length - 1 ?? 0;
+      const maxX = mapData?.[0]?.length - 1 ?? 0;
+      const maxY = mapData?.length - 1 ?? 0;
 
-  if (isNaN(x) || x < 0) x = 0;
-  else if (x > maxX) x = maxX;
+      if (isNaN(x) || x < 0) x = 0;
+      else if (x > maxX) x = maxX;
 
-  if (isNaN(y) || y < 0) y = 0;
-  else if (y > maxY) y = maxY;
+      if (isNaN(y) || y < 0) y = 0;
+      else if (y > maxY) y = maxY;
 
-  document.getElementById('startX').value = x;
-  document.getElementById('startY').value = y;
+      document.getElementById('startX').value = x;
+      document.getElementById('startY').value = y;
 
-  updateStartTileVisual();
-}
-
+      updateStartTileVisual();
+    }
 
     ['startX','startY'].forEach(id => document.getElementById(id).addEventListener('input', validateStartPosition));
     document.getElementById('startDir').addEventListener('change', updateStartTileVisual);
     document.querySelectorAll('.digit4').forEach(input => input.addEventListener('input', () => {
       if (input.value.length > 4) input.value = input.value.slice(0, 4);
     }));
+
+    document.getElementById('tab-selector').addEventListener('change', function() {
+      const selectedTab = this.value;
+      document.querySelectorAll('.tab-section').forEach(sec => {
+        sec.hidden = sec.getAttribute('data-tab') !== selectedTab;
+      });
+    });
+
+document.getElementById('toggle-header').addEventListener('click', () => {
+  document.querySelector('header').classList.toggle('collapsed');
+});
 
     // Init
     ['N','E','S','W'].forEach(dir => {
@@ -561,12 +657,14 @@ function validateStartPosition() {
       });
     });
 
-
     document.getElementById('startX').value = 0;
     document.getElementById('startY').value = 0;
 
     createGrid();
     fetchMapList();
+    
+    // Initialize the first tab to be visible
+    document.querySelector('.tab-section[data-tab="file"]').hidden = false;
   </script>
 </body>
 </html>

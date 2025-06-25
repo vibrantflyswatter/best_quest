@@ -2,3 +2,16 @@
 2025-06-24 01:48:12.846 CDT [42] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.312 s, sync=0.005 s, total=0.331 s; sync files=4, longest=0.004 s, average=0.002 s; distance=8 kB, estimate=8 kB
 2025-06-24 01:53:12.946 CDT [42] LOG:  checkpoint starting: time
 2025-06-24 01:53:13.066 CDT [42] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.105 s, sync=0.003 s, total=0.120 s; sync files=2, longest=0.002 s, average=0.002 s; distance=6 kB, estimate=8 kB
+2025-06-24 17:54:46.354 CDT [40] LOG:  received fast shutdown request
+2025-06-24 17:54:46.358 CDT [40] LOG:  aborting any active transactions
+2025-06-24 17:54:46.365 CDT [40] LOG:  background worker "logical replication launcher" (PID 47) exited with exit code 1
+2025-06-24 17:54:46.365 CDT [42] LOG:  shutting down
+2025-06-24 17:54:46.368 CDT [42] LOG:  checkpoint starting: shutdown immediate
+2025-06-24 17:54:46.391 CDT [42] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.010 s, sync=0.001 s, total=0.026 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=7 kB
+2025-06-24 17:54:46.404 CDT [40] LOG:  database system is shut down
+2025-06-24 22:32:00.448 CDT [37] LOG:  starting PostgreSQL 15.4 on x86_64-redhat-linux-gnu, compiled by gcc (GCC) 13.2.1 20230728 (Red Hat 13.2.1-1), 64-bit
+2025-06-24 22:32:00.449 CDT [37] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-06-24 22:32:00.452 CDT [37] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2025-06-24 22:32:00.460 CDT [41] LOG:  database system was shut down at 2025-06-24 17:54:46 CDT
+2025-06-24 22:32:00.470 CDT [37] LOG:  database system is ready to accept connections
+2025-06-24 22:34:15.679 CDT [51] FATAL:  database "best_quest" does not exist
