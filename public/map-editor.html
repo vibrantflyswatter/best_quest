@@ -181,6 +181,46 @@ header.collapsed {
   top: 0;
   left: 0;
 }
+.tab-container {
+  display: flex;
+  border: 1px solid #666;
+  background: #111;
+  margin: 4px 0;
+}
+
+#vertical-tabs {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #444;
+  background: #333;
+}
+
+.tab-btn {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding: 10px 5px;
+  background: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-bottom: 1px solid #222;
+}
+
+.tab-btn:hover {
+  background: #555;
+}
+
+.tab-btn.active {
+  background: #666;
+}
+
+.tab-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 5px;
+  flex: 1;
+}
 
 .start-tile {
   background-color: #ffee88 !important;
@@ -212,6 +252,17 @@ header.collapsed {
   display: none !important;
 }
 
+.tab-selector-vertical select {
+  writing-mode: vertical-rl;
+  text-align: center;
+  transform: rotate(180deg);
+  height: 120px;
+  background: #444;
+  color: white;
+  border: 1px solid #333;
+  cursor: pointer;
+}
+
 @media (max-width: 600px) {
   header, footer {
     padding: 6px;
@@ -226,15 +277,15 @@ header.collapsed {
 </head>
 <body>
   <header>
+  <div class="tab-selector-vertical">
+  <select id="tab-select">
+    <option value="file" selected>File</option>
+    <option value="edit">Edit</option>
+    <option value="props">Param</option>
+  </select>
+</div>
+
     <div class="tab-content">
-      <div class="tab-selector">
-        <select id="tab-selector">
-          <option value="file">File</option>
-          <option value="edit">Edit</option>
-          <option value="props">Param</option>
-        </select>
-      </div>
-      
       <div class="tab-section" data-tab="file">
         <button onclick="newMap()">New Map</button>
         <button onclick="saveMap()">Save Map</button>
@@ -507,12 +558,14 @@ document.getElementById('selected-coords').textContent = `Selected: (${tileEl.da
       const maps = await res.json();
       const select = document.getElementById('map-select');
       select.querySelectorAll('option:not([value=""])').forEach(opt => opt.remove());
-      maps.forEach(map => {
-        const opt = document.createElement('option');
-        opt.value = map.id;
-        opt.textContent = `${map.name} (#${map.id})`;
-        select.appendChild(opt);
-      });
+      maps
+      .sort((a, b) => a.id - b.id) // Sort numerically by ID
+      .forEach(map => {
+       const opt = document.createElement('option');
+       opt.value = map.id;
+       opt.textContent = `${map.name} (#${map.id})`;
+       select.appendChild(opt);
+  });
     }
 
     async function loadSelectedMap() {
@@ -635,16 +688,40 @@ document.getElementById('selected-coords').textContent = `Selected: (${tileEl.da
       if (input.value.length > 4) input.value = input.value.slice(0, 4);
     }));
 
-    document.getElementById('tab-selector').addEventListener('change', function() {
-      const selectedTab = this.value;
-      document.querySelectorAll('.tab-section').forEach(sec => {
-        sec.hidden = sec.getAttribute('data-tab') !== selectedTab;
-      });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Update active button
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Show/hide sections
+    const selectedTab = btn.getAttribute('data-tab');
+    document.querySelectorAll('.tab-section').forEach(sec => {
+      sec.hidden = sec.getAttribute('data-tab') !== selectedTab;
     });
+  });
+});
 
 document.getElementById('toggle-header').addEventListener('click', () => {
   document.querySelector('header').classList.toggle('collapsed');
 });
+
+document.getElementById('tab-select').addEventListener('change', (e) => {
+  const selectedTab = e.target.value;
+  document.querySelectorAll('.tab-section').forEach(section => {
+    section.hidden = section.getAttribute('data-tab') !== selectedTab;
+  });
+});
+
+let suppressUnloadPrompt = false;
+
+window.addEventListener('beforeunload', function (e) {
+  if (suppressUnloadPrompt) return;
+
+  e.preventDefault();
+  e.returnValue = ''; // Required for Chrome
+});
+
 
     // Init
     ['N','E','S','W'].forEach(dir => {
