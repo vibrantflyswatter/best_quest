@@ -9,6 +9,7 @@
   let mapWidth = 0;
   let mapHeight = 0;
   let wallImages = {}; // key: wallKey, value: Image object
+  let textureVariants = { G: 1, C: 1, F: 1, L: 1, R: 1 }; // Add E/W handling later
   let turnInProgress = false;
   let useAnimation = true;
   let manifest = {};
@@ -34,26 +35,23 @@
     });
   }
 
-  async function preloadAssets() {
-    const promises = [];
-  console.log("Fetching manifest...");
-  try {
-    const res = await fetch(`${TILESET_FOLDER}/manifest.json`);
-    console.log("Manifest response:", res);
-    manifest = await res.json();
-    console.log("Parsed manifest:", manifest);
-  } catch (e) {
-    console.error("Manifest fetch failed:", e);
-    showMessage("Failed to load asset manifest!", 5000);
-    return;
+function getVariant(prefix, x, y) {
+    const count = textureVariants[prefix] || 1;
+    return (x + y) % count + 1;
   }
 
-    for (let depth = 0; depth <= VIEW_DEPTH; depth++) {
-      for (let offset = -MAX_OFFSET; offset <= MAX_OFFSET; offset++) {
-        const key = `${offset}_${depth}`;
-        const npcFile = `GOBBO_${key}.png`;
-        promises.push(loadImage(`${GOBBO_PATH}/${npcFile}`).then(img => { if (img) gobboImages[key] = img; }));
-      }
+  async function preloadAssets() {
+    manifest = await fetch(`${TILESET_FOLDER}/manifest.json`).then(res => res.json());
+    const promises = [];
+
+    // Count available variants
+    const variantCounts = { G: new Set(), C: new Set(), F: new Set(), L: new Set(), R: new Set() };
+    for (const key of manifest.textures) {
+      const match = key.match(/^([A-Z])([0-9])_/);
+      if (match) variantCounts[match[1]]?.add(parseInt(match[2]));
+    }
+    for (const type in variantCounts) {
+      textureVariants[type] = variantCounts[type].size || 1;
     }
 
     for (const wallKey of manifest.textures) {
@@ -63,13 +61,23 @@
       }));
     }
 
+    for (let depth = 0; depth <= VIEW_DEPTH; depth++) {
+      for (let offset = -MAX_OFFSET; offset <= MAX_OFFSET; offset++) {
+        const key = `${offset}_${depth}`;
+        const npcFile = `GOBBO_${key}.png`;
+        promises.push(loadImage(`${GOBBO_PATH}/${npcFile}`).then(img => {
+          if (img) gobboImages[key] = img;
+        }));
+      }
+    }
+
     await Promise.all(promises);
     assetsLoaded = true;
     drawScene();
     updatePlayerPositionDisplay();
-
     await waitForTurnEnd();
   }
+
 
   function isWalkable(x, y, fromDir = null) {
     if (!mapData[y] || !mapData[y][x]) return false;
@@ -91,17 +99,8 @@
   }
 
   function drawScene(context = ctx) {
-    
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-     if (!canvas || !context) {
-    console.error("Missing canvas or context!");
-    return;
-  }
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  console.log("Drawing scene...");
-  
     const DIR_TO_VIEW_REL = {
       0: { N: "F", E: "R", S: null, W: "L" },
       1: { E: "F", S: "R", W: null, N: "L" },
@@ -129,22 +128,28 @@
 
         const tile = mapData[tileY]?.[tileX];
 
+        // Floor and ceiling
+        const gVar = getVariant('G', tileX, tileY);
+        const cVar = getVariant('C', tileX, tileY);
+        const groundKey = `G${gVar}_${offset}_${depth}.png`;
+        const ceilingKey = `C${cVar}_${offset}_${depth}.png`;
+
+        const ground = wallImages[groundKey];
+        const ceiling = wallImages[ceilingKey];
+        if (ground) context.drawImage(ground, (canvas.width - ground.width) / 2, (canvas.height - ground.height) / 2);
+        if (ceiling) context.drawImage(ceiling, (canvas.width - ceiling.width) / 2, (canvas.height - ceiling.height) / 2);
+
+        // Walls
         if (tile?.walls) {
           for (const dir of ["N", "E", "S", "W"]) {
             if (!tile.walls[dir]) continue;
-
             const viewRel = viewMap[dir];
             if (!viewRel) continue;
-
-            const sequence = (tileX + tileY) % 2 + 1;
-            const wallKey = `${viewRel}${sequence}_${offset}_${depth}.png`;
-
+            const wallPrefix = viewRel;
+            const wVar = getVariant(wallPrefix, tileX, tileY);
+            const wallKey = `${wallPrefix}${wVar}_${offset}_${depth}.png`;
             const img = wallImages[wallKey];
-            if (img) {
-              const drawX = (canvas.width - img.width) / 2;
-              const drawY = (canvas.height - img.height) / 2;
-              context.drawImage(img, drawX, drawY);
-            }
+            if (img) context.drawImage(img, (canvas.width - img.width) / 2, (canvas.height - img.height) / 2);
           }
         }
 
@@ -155,6 +160,7 @@
       }
     }
   }
+
 
   function showStandbyEffect() {
     const overlay = document.getElementById("canvasOverlay");
@@ -175,7 +181,7 @@
 
     setTimeout(() => {
       overlay.style.display = "none";
-      showMessage("Line One <br> And Two <br> Three?", 2000);
+      showMessage("Line One \n And Two \n Three?", 2000);
     }, 700);
   }
 

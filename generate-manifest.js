@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const folder = process.argv[2]; // e.g. "public/assets/SIMPBRICKS"
+const folder = process.argv[2]; // e.g. "public/assets/dungeon/SIMPBRICKS"
 
 if (!folder) {
   console.error('Usage: node generate-manifest.js <folder path>');
